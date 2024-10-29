@@ -192,10 +192,6 @@ channels.forEach(channel => {
         messagesContainer.classList.add('slide-in');
     });
 });
-document.getElementById('toggleChannelAdder').addEventListener('click', function() {
-    const channelAdder = document.getElementById('channelAdder');
-    channelAdder.classList.toggle('hidden');
-});
 
 document.getElementById('createChannelButton').addEventListener('click', function() {
     const newChannelName = document.getElementById('newChannelName').value.trim();

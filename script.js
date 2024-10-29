@@ -192,3 +192,114 @@ channels.forEach(channel => {
         messagesContainer.classList.add('slide-in');
     });
 });
+document.getElementById('toggleChannelAdder').addEventListener('click', function() {
+    const channelAdder = document.getElementById('channelAdder');
+    channelAdder.classList.toggle('hidden');
+});
+
+document.getElementById('createChannelButton').addEventListener('click', function() {
+    const newChannelName = document.getElementById('newChannelName').value.trim();
+    const channelsContainer = document.getElementById('channels');
+    const channelError = document.getElementById('channelError');
+
+    if (newChannelName === '') {
+        channelError.innerText = 'Channel name cannot be empty.';
+        return;
+    }
+
+    const existingChannel = document.getElementById(newChannelName.toLowerCase());
+    if (existingChannel) {
+        channelError.innerText = 'Channel name already in use. Please use a different name.';
+        return;
+    }
+
+    const newChannel = document.createElement('div');
+    newChannel.classList.add('channel');
+    newChannel.id = newChannelName.toLowerCase();
+    newChannel.innerText = newChannelName;
+
+    newChannel.addEventListener('click', function() {
+        const chatHeader = document.getElementById('chatHeader');
+        const messagesContainer = document.getElementById('messages');
+        const selectedChannel = this.innerText;
+    
+        chatHeader.innerHTML = `<h2>${selectedChannel}</h2>`;
+        
+        const allMessages = document.querySelectorAll('.message');
+        allMessages.forEach(message => {
+            message.style.display = 'none';
+        });
+
+        const channelMessages = document.querySelectorAll(`.message[data-channel="${selectedChannel}"]`);
+        channelMessages.forEach(message => {
+            message.style.display = 'block';
+        });
+
+        messagesContainer.classList.remove('slide-in');
+        void messagesContainer.offsetWidth;
+        messagesContainer.classList.add('slide-in');
+    });
+
+    channelsContainer.appendChild(newChannel);
+    document.getElementById('newChannelName').value = '';
+    channelError.innerText = '';
+});
+
+channels.forEach(channel => {
+    channel.addEventListener('click', function() {
+        const chatHeader = document.getElementById('chatHeader');
+        const messagesContainer = document.getElementById('messages');
+        const selectedChannel = this.innerText;
+    
+        chatHeader.innerHTML = `<h2>${selectedChannel}</h2>`;
+        
+        const allMessages = document.querySelectorAll('.message');
+        allMessages.forEach(message => {
+            message.style.display = 'none';
+        });
+
+        const channelMessages = document.querySelectorAll(`.message[data-channel="${selectedChannel}"]`);
+        channelMessages.forEach(message => {
+            message.style.display = 'block';
+        });
+
+        messagesContainer.classList.remove('slide-in');
+        void messagesContainer.offsetWidth;
+        messagesContainer.classList.add('slide-in');
+    });
+});
+
+document.getElementById('settingsButton').addEventListener('click', function() {
+    const settingsMenu = document.getElementById('settingsMenu');
+    settingsMenu.classList.toggle('hidden');
+});
+
+document.getElementById('closeSettingsButton').addEventListener('click', function() {
+    const settingsMenu = document.getElementById('settingsMenu');
+    settingsMenu.classList.add('hidden');
+});
+
+document.getElementById('themeToggle').addEventListener('change', function() {
+    if (this.checked) {
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light');
+    } else {
+        document.body.classList.add('dark-mode');
+        document.body.classList.remove('light-mode');
+        localStorage.setItem('theme', 'dark');
+    }
+});
+
+window.addEventListener('load', function() {
+    const theme = localStorage.getItem('theme');
+    if (theme === 'light') {
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('dark-mode');
+        document.getElementById('themeToggle').checked = true;
+    } else {
+        document.body.classList.add('dark-mode');
+        document.body.classList.remove('light-mode');
+        document.getElementById('themeToggle').checked = false;
+    }
+});

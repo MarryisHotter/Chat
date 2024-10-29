@@ -14,6 +14,12 @@ body {
     font-family: Arial, sans-serif;
 }
 
+
+body.dark-mode {
+    background-color: #2f3136;
+    color: white;
+}
+
 .sidebar {
     width: 20%;
     background-color: #2f3136;
@@ -191,10 +197,12 @@ body {
 .context-menu-item.delete:hover {
     background-color: #c0392b;
 }
+
 .error-message {
     color: red;
     margin-top: 10px;
 }
+
 #toggleChannelAdder {
     margin-top: 10px;
     padding: 10px;
@@ -216,6 +224,7 @@ body {
 #channelAdder {
     margin-top: 10px;
 }
+
 #newChannelName {
     background-color: #2c2c2c;
     color: #ffffff;
@@ -223,7 +232,7 @@ body {
     border: 1px solid #444;
     border-radius: 5px;
     margin-top: 10px;
-    width: calc(100% - 22px); /* Adjust width to fit within the container */
+    width: calc(100% - 22px);
 }
 
 #createChannelButton {
@@ -238,5 +247,91 @@ body {
 }
 
 #createChannelButton:hover {
+    background-color: #4a5b9e;
+}
+
+body.light-mode {
+    background-color: #f0f0f0;
+    color: black;
+}
+
+body.light-mode .sidebar {
+    background-color: #ffffff;
+    color: black;
+}
+
+body.light-mode .chat-header {
+    background-color: #e0e0e0;
+    color: black;
+}
+
+body.light-mode .messages {
+    background-color: #ffffff;
+}
+
+body.light-mode .message-input {
+    background-color: #e0e0e0;
+}
+
+body.light-mode .message-input input {
+    background-color: #ffffff;
+    color: black;
+}
+
+body.light-mode .message-input button {
+    background-color: #5b6eae;
+    color: white;
+}
+
+body.light-mode .message-input button:hover {
+    background-color: #4a5b9e;
+}
+
+#settingsMenu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #2f3136;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#settingsMenu.hidden {
+    display: none;
+}
+
+body.light-mode #settingsMenu {
+    background-color: #ffffff;
+    color: black;
+}
+
+#settingsButton {
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    background-color: #5b6eae;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#settingsButton:hover {
+    background-color: #4a5b9e;
+}
+
+#closeSettingsButton {
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    background-color: #5b6eae;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#closeSettingsButton:hover {
     background-color: #4a5b9e;
 }

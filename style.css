@@ -1,3 +1,4 @@
+/* Add keyframes for fade-in and slide-in animations */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -73,6 +74,22 @@ body {
     font-weight: bold;
 }
 
+.message .message-content {
+    margin-left: 5px;
+}
+
+.message .timestamp {
+    font-size: 0.8em;
+    color: #888;
+    margin-left: 10px;
+}
+
+.message .edited {
+    font-size: 0.8em;
+    color: #888;
+    margin-left: 5px;
+}
+
 .message-input {
     display: flex;
     border-top: 1px solid #ccc;
@@ -110,4 +127,24 @@ body {
 
 .slide-in {
     animation: slideIn 0.5s;
+}
+
+/* Context menu styles */
+.context-menu {
+    position: absolute;
+    background-color: #2f3136;
+    border: 1px solid #444;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.context-menu-item {
+    padding: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+.context-menu-item:hover {
+    background-color: #3a3c42;
 }

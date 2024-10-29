@@ -7,7 +7,9 @@ document.getElementById('sendButton').addEventListener('click', function() {
         const newMessage = document.createElement('div');
         newMessage.classList.add('message', 'fade-in');
         newMessage.setAttribute('data-channel', currentChannel);
-        newMessage.innerHTML = `<span class="username">You:</span> ${messageInput.value}`;
+        
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        newMessage.innerHTML = `<span class="username">You:</span> <span class="message-content">${messageInput.value}</span> <span class="timestamp">${timestamp}</span>`;
         
         messagesContainer.appendChild(newMessage);
         messageInput.value = '';
@@ -42,14 +44,16 @@ channels.forEach(channel => {
         });
 
         messagesContainer.classList.remove('slide-in');
-        void messagesContainer.offsetWidth; 
+        void messagesContainer.offsetWidth; // Trigger reflow to restart animation
         messagesContainer.classList.add('slide-in');
 
         if (messageInput.value.trim() !== '') {
             const newMessage = document.createElement('div');
             newMessage.classList.add('message', 'fade-in');
             newMessage.setAttribute('data-channel', selectedChannel);
-            newMessage.innerHTML = `<span class="username">You:</span> ${messageInput.value}`;
+            
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            newMessage.innerHTML = `<span class="username">You:</span> <span class="message-content">${messageInput.value}</span> <span class="timestamp">${timestamp}</span>`;
             
             messagesContainer.appendChild(newMessage);
             messageInput.value = '';
@@ -62,5 +66,45 @@ document.addEventListener('keypress', function(event) {
     const messageInput = document.getElementById('messageInput');
     if (event.key.length === 1 && event.key.match(/[a-z0-9]/i)) {
         messageInput.focus();
+    }
+});
+
+// Add right-click event listener to messages for editing
+document.addEventListener('contextmenu', function(event) {
+    if (event.target.classList.contains('message') || event.target.closest('.message')) {
+        event.preventDefault();
+        
+        const messageElement = event.target.closest('.message');
+        const contextMenu = document.createElement('div');
+        contextMenu.classList.add('context-menu');
+        contextMenu.innerHTML = '<div class="context-menu-item">Edit</div>';
+        
+        document.body.appendChild(contextMenu);
+        contextMenu.style.top = `${event.clientY}px`;
+        contextMenu.style.left = `${event.clientX}px`;
+
+        const editOption = contextMenu.querySelector('.context-menu-item');
+        editOption.addEventListener('click', function() {
+            const messageContentElement = messageElement.querySelector('.message-content');
+            const currentText = messageContentElement.innerText;
+            const newText = prompt('Edit your message:', currentText);
+            if (newText !== null && newText.trim() !== '') {
+                messageContentElement.innerText = newText.trim();
+                const editedElement = messageElement.querySelector('.edited');
+                if (!editedElement) {
+                    const editedSpan = document.createElement('span');
+                    editedSpan.classList.add('edited');
+                    editedSpan.innerText = '(edited)';
+                    messageElement.appendChild(editedSpan);
+                }
+            }
+            document.body.removeChild(contextMenu);
+        });
+
+        document.addEventListener('click', function() {
+            if (document.body.contains(contextMenu)) {
+                document.body.removeChild(contextMenu);
+            }
+        }, { once: true });
     }
 });

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Channels</h2>
+        <div class="channels">
+            <div class="channel" id="general">General</div>
+            <div class="channel" id="random">Random</div>
+            <div class="channel" id="tech-talk">Tech Talk</div>
+        </div>
+    </div>
+    <div class="chat-area">
+        <div class="chat-header" id="chatHeader">
+            <h2>General</h2>
+        </div>
+        <div class="messages" id="messages">
+        </div>
+        <div class="message-input">
+            <input type="text" id="messageInput" placeholder="Type a message...">
+            <button id="sendButton">Send</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

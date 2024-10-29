@@ -9,10 +9,16 @@
 <body>
     <div class="sidebar">
         <h2>Channels</h2>
-        <div class="channels">
+        <div class="channels" id="channels">
             <div class="channel" id="general">General</div>
-            <div class="channel" id="random">Random</div>
-            <div class="channel" id="tech-talk">Tech Talk</div>
+            <div class="channel" id="global">Public global Chat</div>
+            <div class="channel" id="support">Support and questions</div>
+        </div>
+        <button id="toggleChannelAdder">+</button>
+        <div id="channelAdder" class="hidden">
+            <input type="text" id="newChannelName" placeholder="New channel name">
+            <button id="createChannelButton">Create Channel</button>
+            <div id="channelError" class="error-message"></div>
         </div>
     </div>
     <div class="chat-area">

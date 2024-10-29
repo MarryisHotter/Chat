@@ -69,7 +69,7 @@ document.addEventListener('keypress', function(event) {
     }
 });
 
-// Add right-click event listener to messages for editing
+// Add right-click event listener to messages for editing and deleting
 document.addEventListener('contextmenu', function(event) {
     if (event.target.classList.contains('message') || event.target.closest('.message')) {
         event.preventDefault();
@@ -77,13 +77,16 @@ document.addEventListener('contextmenu', function(event) {
         const messageElement = event.target.closest('.message');
         const contextMenu = document.createElement('div');
         contextMenu.classList.add('context-menu');
-        contextMenu.innerHTML = '<div class="context-menu-item">Edit</div>';
+        contextMenu.innerHTML = `
+            <div class="context-menu-item">Edit</div>
+            <div class="context-menu-item delete">Delete</div>
+        `;
         
         document.body.appendChild(contextMenu);
         contextMenu.style.top = `${event.clientY}px`;
         contextMenu.style.left = `${event.clientX}px`;
 
-        const editOption = contextMenu.querySelector('.context-menu-item');
+        const editOption = contextMenu.querySelector('.context-menu-item:not(.delete)');
         editOption.addEventListener('click', function() {
             const messageContentElement = messageElement.querySelector('.message-content');
             const currentText = messageContentElement.innerText;
@@ -98,6 +101,12 @@ document.addEventListener('contextmenu', function(event) {
                     messageElement.appendChild(editedSpan);
                 }
             }
+            document.body.removeChild(contextMenu);
+        });
+
+        const deleteOption = contextMenu.querySelector('.context-menu-item.delete');
+        deleteOption.addEventListener('click', function() {
+            messageElement.remove();
             document.body.removeChild(contextMenu);
         });
 

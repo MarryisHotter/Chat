@@ -8,6 +8,15 @@
     }
 }
 
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
 body {
     display: flex;
     height: 100vh;
@@ -137,6 +146,7 @@ body {
     border-radius: 5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     z-index: 1000;
+    display: flex;
 }
 
 .context-menu-item {
@@ -147,4 +157,13 @@ body {
 
 .context-menu-item:hover {
     background-color: #3a3c42;
+}
+
+.context-menu-item.delete {
+    border-radius: 0 5px 5px 0;
+    background-color: #e74c3c;
+}
+
+.context-menu-item.delete:hover {
+    background-color: #c0392b;
 }

@@ -1,9 +1,19 @@
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 body {
     display: flex;
     height: 100vh;
     margin: 0;
     font-family: Arial, sans-serif;
 }
+
 .sidebar {
     width: 20%;
     background-color: #2f3136;
@@ -12,52 +22,64 @@ body {
     flex-direction: column;
     padding: 10px;
 }
+
 .sidebar h2 {
     margin: 0;
     padding: 10px 0;
     border-bottom: 1px solid #444;
 }
+
 .channels {
     flex-grow: 1;
     overflow-y: auto;
 }
+
 .channel {
     padding: 10px;
     cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
+
 .channel:hover {
     background-color: #3a3c42;
 }
+
 .chat-area {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
 }
+
 .chat-header {
     background-color: #36393f;
     color: white;
     padding: 10px;
     border-bottom: 1px solid #444;
 }
+
 .messages {
     flex-grow: 1;
     padding: 10px;
     overflow-y: auto;
     background-color: #34393f;
 }
+
 .message {
     margin-bottom: 10px;
     color: white;
 }
+
 .message .username {
     font-weight: bold;
 }
+
 .message-input {
     display: flex;
     border-top: 1px solid #ccc;
     padding: 10px;
     background-color: #34393f;
 }
+
 .message-input input {
     flex-grow: 1;
     padding: 10px;
@@ -66,6 +88,7 @@ body {
     background-color: #2a2a2c;
     color: white;
 }
+
 .message-input button {
     margin-left: 10px;
     padding: 10px 20px;
@@ -75,6 +98,16 @@ body {
     border-radius: 5px;
     cursor: pointer;
 }
+
 .message-input button:hover {
     background-color: #5b6eae;
+}
+
+/* Animation classes */
+.fade-in {
+    animation: fadeIn 0.5s;
+}
+
+.slide-in {
+    animation: slideIn 0.5s;
 }

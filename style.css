@@ -1,19 +1,9 @@
-/* Add keyframes for fade-in and slide-in animations */
 @keyframes fadeIn {
     from {
         opacity: 0;
     }
     to {
         opacity: 1;
-    }
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-    }
-    to {
-        transform: translateX(0);
     }
 }
 
@@ -129,7 +119,6 @@ body {
     background-color: #5b6eae;
 }
 
-/* Animation classes */
 .fade-in {
     animation: fadeIn 0.5s;
 }
@@ -138,7 +127,6 @@ body {
     animation: slideIn 0.5s;
 }
 
-/* Context menu styles */
 .context-menu {
     position: absolute;
     background-color: #2f3136;

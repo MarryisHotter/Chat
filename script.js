@@ -44,7 +44,7 @@ channels.forEach(channel => {
         });
 
         messagesContainer.classList.remove('slide-in');
-        void messagesContainer.offsetWidth; // Trigger reflow to restart animation
+        void messagesContainer.offsetWidth;
         messagesContainer.classList.add('slide-in');
 
         if (messageInput.value.trim() !== '') {
@@ -69,7 +69,6 @@ document.addEventListener('keypress', function(event) {
     }
 });
 
-// Add right-click event listener to messages for editing and deleting
 document.addEventListener('contextmenu', function(event) {
     if (event.target.classList.contains('message') || event.target.closest('.message')) {
         event.preventDefault();

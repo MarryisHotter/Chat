@@ -1,5 +1,4 @@
-let lastMessageTimestamp = null;
-let lastMessageDate = null;
+const lastMessageTimestamps = {};
 
 document.getElementById('sendButton').addEventListener('click', function() {
     const messageInput = document.getElementById('messageInput');
@@ -16,12 +15,13 @@ document.getElementById('sendButton').addEventListener('click', function() {
         const date = now.toLocaleDateString();
         let showTimestamp = true;
 
-        if (lastMessageTimestamp && lastMessageDate) {
-            const [day, month, year] = lastMessageDate.split('.'); // Assuming date format is DD.MM.YYYY
-            const lastDateTime = new Date(`${year}-${month}-${day}T${lastMessageTimestamp}`);
+        if (lastMessageTimestamps[currentChannel]) {
+            const { lastTimestamp, lastDate } = lastMessageTimestamps[currentChannel];
+            const [day, month, year] = lastDate.split('.');
+            const lastDateTime = new Date(`${year}-${month}-${day}T${lastTimestamp}`);
             const timeDifference = Math.abs(now - lastDateTime);
 
-            if (timeDifference < 60000) { // within the same minute
+            if (timeDifference < 60000) {
                 showTimestamp = false;
             }
         }
@@ -29,8 +29,7 @@ document.getElementById('sendButton').addEventListener('click', function() {
         newMessage.innerHTML = `<span class="username">You:</span> <span class="message-content">${messageInput.value}</span>`;
         if (showTimestamp) {
             newMessage.innerHTML += ` <span class="date">${date}</span> <span class="timestamp">${timestamp}</span>`;
-            lastMessageTimestamp = timestamp;
-            lastMessageDate = date;
+            lastMessageTimestamps[currentChannel] = { lastTimestamp: timestamp, lastDate: date };
         } else {
             newMessage.classList.add('no-timestamp');
         }
@@ -52,9 +51,7 @@ channels.forEach(channel => {
     channel.addEventListener('click', function() {
         const chatHeader = document.getElementById('chatHeader');
         const messagesContainer = document.getElementById('messages');
-        const selectedChannel = this.innerText;
-        const messageInput = document.getElementById('messageInput');
-    
+        const selectedChannel = this.innerText;  
         chatHeader.innerHTML = `<h2>${selectedChannel}</h2>`;
         
         const allMessages = document.querySelectorAll('.message');
@@ -66,23 +63,6 @@ channels.forEach(channel => {
         channelMessages.forEach(message => {
             message.style.display = 'block';
         });
-
-        messagesContainer.classList.remove('slide-in');
-        void messagesContainer.offsetWidth;
-        messagesContainer.classList.add('slide-in');
-
-        if (messageInput.value.trim() !== '') {
-            const newMessage = document.createElement('div');
-            newMessage.classList.add('message', 'fade-in');
-            newMessage.setAttribute('data-channel', selectedChannel);
-            
-            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            newMessage.innerHTML = `<span class="username">You:</span> <span class="message-content">${messageInput.value}</span> <span class="timestamp">${timestamp}</span>`;
-            
-            messagesContainer.appendChild(newMessage);
-            messageInput.value = '';
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
     });
 });
 

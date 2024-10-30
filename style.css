@@ -122,8 +122,15 @@ body.dark-mode {
 .message .timestamp {
     font-size: 0.8em;
     color: #888;
+    margin-left: 0px;
+}
+
+.message .date {
+    font-size: 0.8em;
+    color: #888;
     margin-left: 10px;
 }
+
 
 .message .edited {
     font-size: 0.8em;
@@ -401,4 +408,8 @@ body.light-mode #settingsMenu {
 
 #closeSettingsButton:hover {
     background-color: #4a5b9e;
+}
+.message.no-timestamp .date,
+.message.no-timestamp .timestamp {
+    display: none;
 }

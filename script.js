@@ -1,16 +1,40 @@
+let lastMessageTimestamp = null;
+let lastMessageDate = null;
+
 document.getElementById('sendButton').addEventListener('click', function() {
     const messageInput = document.getElementById('messageInput');
     const messagesContainer = document.getElementById('messages');
     const currentChannel = document.querySelector('.chat-header h2').innerText;
-    
+
     if (messageInput.value.trim() !== '') {
         const newMessage = document.createElement('div');
         newMessage.classList.add('message', 'fade-in');
         newMessage.setAttribute('data-channel', currentChannel);
-        
-        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        newMessage.innerHTML = `<span class="username">You:</span> <span class="message-content">${messageInput.value}</span> <span class="timestamp">${timestamp}</span>`;
-        
+
+        const now = new Date();
+        const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const date = now.toLocaleDateString();
+        let showTimestamp = true;
+
+        if (lastMessageTimestamp && lastMessageDate) {
+            const [day, month, year] = lastMessageDate.split('.'); // Assuming date format is DD.MM.YYYY
+            const lastDateTime = new Date(`${year}-${month}-${day}T${lastMessageTimestamp}`);
+            const timeDifference = Math.abs(now - lastDateTime);
+
+            if (timeDifference < 60000) { // within the same minute
+                showTimestamp = false;
+            }
+        }
+
+        newMessage.innerHTML = `<span class="username">You:</span> <span class="message-content">${messageInput.value}</span>`;
+        if (showTimestamp) {
+            newMessage.innerHTML += ` <span class="date">${date}</span> <span class="timestamp">${timestamp}</span>`;
+            lastMessageTimestamp = timestamp;
+            lastMessageDate = date;
+        } else {
+            newMessage.classList.add('no-timestamp');
+        }
+
         messagesContainer.appendChild(newMessage);
         messageInput.value = '';
         messagesContainer.scrollTop = messagesContainer.scrollHeight;

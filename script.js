@@ -64,7 +64,7 @@ channels.forEach(channel => {
 
 document.addEventListener('keypress', function(event) {
     const messageInput = document.getElementById('messageInput');
-    if (event.key.length === 1 && event.key.match(/[a-z0-9]/i)) {
+    if (!overlay.classList.contains('visible') && event.key.length === 1 && event.key.match(/[a-z0-9]/i)) {
         messageInput.focus();
     }
 });
@@ -267,12 +267,43 @@ channels.forEach(channel => {
 
 document.getElementById('settingsButton').addEventListener('click', function() {
     const settingsMenu = document.getElementById('settingsMenu');
+    const overlay = document.getElementById('overlay');
     settingsMenu.classList.toggle('hidden');
+    overlay.classList.toggle('hidden');
+    overlay.classList.toggle('visible');
 });
 
 document.getElementById('closeSettingsButton').addEventListener('click', function() {
     const settingsMenu = document.getElementById('settingsMenu');
+    const overlay = document.getElementById('overlay');
     settingsMenu.classList.add('hidden');
+    overlay.classList.add('hidden');
+    overlay.classList.remove('visible');
+});
+
+document.getElementById('themeToggle').addEventListener('change', function() {
+    if (this.checked) {
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light');
+    } else {
+        document.body.classList.add('dark-mode');
+        document.body.classList.remove('light-mode');
+        localStorage.setItem('theme', 'dark');
+    }
+});
+
+window.addEventListener('load', function() {
+    const theme = localStorage.getItem('theme');
+    if (theme === 'light') {
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('dark-mode');
+        document.getElementById('themeToggle').checked = true;
+    } else {
+        document.body.classList.add('dark-mode');
+        document.body.classList.remove('light-mode');
+        document.getElementById('themeToggle').checked = false;
+    }
 });
 
 document.getElementById('themeToggle').addEventListener('change', function() {

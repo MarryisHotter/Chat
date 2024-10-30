@@ -37,6 +37,9 @@ document.getElementById('sendButton').addEventListener('click', function() {
         messagesContainer.appendChild(newMessage);
         messageInput.value = '';
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        // Adjust the layout for the new message
+        adjustMessageLayout();
     }
 });
 
@@ -120,81 +123,10 @@ document.addEventListener('contextmenu', function(event) {
         }, { once: true });
     }
 });
+
 document.getElementById('toggleChannelAdder').addEventListener('click', function() {
     const channelAdder = document.getElementById('channelAdder');
     channelAdder.classList.toggle('hidden');
-});
-
-document.getElementById('createChannelButton').addEventListener('click', function() {
-    const newChannelName = document.getElementById('newChannelName').value.trim();
-    const channelsContainer = document.getElementById('channels');
-    const channelError = document.getElementById('channelError');
-
-    if (newChannelName === '') {
-        channelError.innerText = 'Channel name cannot be empty.';
-        return;
-    }
-
-    const existingChannel = document.getElementById(newChannelName.toLowerCase());
-    if (existingChannel) {
-        channelError.innerText = 'Channel name already in use. Please use a different name.';
-        return;
-    }
-
-    const newChannel = document.createElement('div');
-    newChannel.classList.add('channel');
-    newChannel.id = newChannelName.toLowerCase();
-    newChannel.innerText = newChannelName;
-
-    newChannel.addEventListener('click', function() {
-        const chatHeader = document.getElementById('chatHeader');
-        const messagesContainer = document.getElementById('messages');
-        const selectedChannel = this.innerText;
-    
-        chatHeader.innerHTML = `<h2>${selectedChannel}</h2>`;
-        
-        const allMessages = document.querySelectorAll('.message');
-        allMessages.forEach(message => {
-            message.style.display = 'none';
-        });
-
-        const channelMessages = document.querySelectorAll(`.message[data-channel="${selectedChannel}"]`);
-        channelMessages.forEach(message => {
-            message.style.display = 'block';
-        });
-
-        messagesContainer.classList.remove('slide-in');
-        void messagesContainer.offsetWidth;
-        messagesContainer.classList.add('slide-in');
-    });
-
-    channelsContainer.appendChild(newChannel);
-    document.getElementById('newChannelName').value = '';
-    channelError.innerText = '';
-});
-
-channels.forEach(channel => {
-    channel.addEventListener('click', function() {
-        const chatHeader = document.getElementById('chatHeader');
-        const messagesContainer = document.getElementById('messages');
-        const selectedChannel = this.innerText;
-    
-        chatHeader.innerHTML = `<h2>${selectedChannel}</h2>`;
-        
-        const allMessages = document.querySelectorAll('.message');
-        allMessages.forEach(message => {
-            message.style.display = 'none';
-        });
-
-        const channelMessages = document.querySelectorAll(`.message[data-channel="${selectedChannel}"]`);
-        channelMessages.forEach(message => {
-            message.style.display = 'block';
-        });
-
-        messagesContainer.classList.remove('slide-in');
-        void messagesContainer.offsetWidth;
-        messagesContainer.classList.add('slide-in');
-    });
 });
 
 document.getElementById('createChannelButton').addEventListener('click', function() {
@@ -297,31 +229,16 @@ document.getElementById('themeToggle').addEventListener('change', function() {
     }
 });
 
-window.addEventListener('load', function() {
-    const theme = localStorage.getItem('theme');
-    if (theme === 'light') {
-        document.body.classList.add('light-mode');
-        document.body.classList.remove('dark-mode');
-        document.getElementById('themeToggle').checked = true;
-    } else {
-        document.body.classList.add('dark-mode');
-        document.body.classList.remove('light-mode');
-        document.getElementById('themeToggle').checked = false;
-    }
-});
-
-document.getElementById('themeToggle').addEventListener('change', function() {
+document.getElementById('compactToggle').addEventListener('change', function() {
     if (this.checked) {
-        document.body.classList.add('light-mode');
-        document.body.classList.remove('dark-mode');
-        localStorage.setItem('theme', 'light');
+        document.body.classList.add('compact-mode');
+        localStorage.setItem('compact', 'true');
     } else {
-        document.body.classList.add('dark-mode');
-        document.body.classList.remove('light-mode');
-        localStorage.setItem('theme', 'dark');
+        document.body.classList.remove('compact-mode');
+        localStorage.setItem('compact', 'false');
     }
+    adjustMessageLayout();
 });
-
 window.addEventListener('load', function() {
     const theme = localStorage.getItem('theme');
     if (theme === 'light') {
@@ -333,4 +250,76 @@ window.addEventListener('load', function() {
         document.body.classList.remove('light-mode');
         document.getElementById('themeToggle').checked = false;
     }
+
+    const compact = localStorage.getItem('compact');
+    if (compact === 'true') {
+        document.body.classList.add('compact-mode');
+        document.getElementById('compactToggle').checked = true;
+    } else {
+        document.body.classList.remove('compact-mode');
+        document.getElementById('compactToggle').checked = false;
+    }
+    adjustMessageLayout();
 });
+
+function adjustMessageLayout() {
+    const messages = document.querySelectorAll('.message');
+    messages.forEach(message => {
+        // Find elements within the message
+        let username = message.querySelector('.username');
+        let timestamp = message.querySelector('.timestamp');
+        let date = message.querySelector('.date');
+        let messageContent = message.querySelector('.message-content');
+        let header = message.querySelector('.message-header');
+
+        // If elements are missing, create them
+        if (!username) {
+            username = document.createElement('span');
+            username.classList.add('username');
+            username.innerText = 'You:';
+        }
+
+        if (!timestamp) {
+            timestamp = document.createElement('span');
+            timestamp.classList.add('timestamp');
+            timestamp.innerText = ''; // Set to appropriate value if available
+        }
+
+        if (!date) {
+            date = document.createElement('span');
+            date.classList.add('date');
+            date.innerText = ''; // Set to appropriate value if available
+        }
+
+        if (document.body.classList.contains('compact-mode')) {
+            if (header) {
+                // Move elements out of header
+                header.remove();
+                // Remove existing elements to prevent duplicates
+                username.remove();
+                date.remove();
+                timestamp.remove();
+                // Insert elements in the correct order
+                message.insertBefore(username, messageContent);
+                message.insertBefore(messageContent, username.nextSibling);
+                message.insertBefore(timestamp, messageContent.nextSibling);
+                message.insertBefore(date, timestamp.nextSibling);
+            }
+        } else {
+            if (!header) {
+                // Create header and move elements into it
+                header = document.createElement('div');
+                header.classList.add('message-header');
+                // Remove elements from message to avoid duplicates
+                if (username) username.remove();
+                if (timestamp) timestamp.remove();
+                if (date) date.remove();
+                // Append elements to header
+                header.appendChild(username);
+                header.appendChild(timestamp);
+                header.appendChild(date);
+                message.insertBefore(header, messageContent);
+            }
+        }
+    });
+}

@@ -13,6 +13,8 @@ document.getElementById('sendButton').addEventListener('click', function() {
         const now = new Date();
         const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const date = now.toLocaleDateString();
+        newMessage.setAttribute('data-date', date);
+        newMessage.setAttribute('data-timestamp', timestamp);
         let showTimestamp = true;
 
         if (lastMessageTimestamps[currentChannel]) {
@@ -272,6 +274,10 @@ function adjustMessageLayout() {
         let messageContent = message.querySelector('.message-content');
         let header = message.querySelector('.message-header');
 
+        // Retrieve stored date and timestamp if available
+        const storedDate = message.getAttribute('data-date');
+        const storedTimestamp = message.getAttribute('data-timestamp');
+
         // If elements are missing, create them
         if (!username) {
             username = document.createElement('span');
@@ -282,13 +288,17 @@ function adjustMessageLayout() {
         if (!timestamp) {
             timestamp = document.createElement('span');
             timestamp.classList.add('timestamp');
-            timestamp.innerText = ''; // Set to appropriate value if available
+            timestamp.innerText = storedTimestamp || '';
+        } else {
+            timestamp.innerText = storedTimestamp || timestamp.innerText;
         }
 
         if (!date) {
             date = document.createElement('span');
             date.classList.add('date');
-            date.innerText = ''; // Set to appropriate value if available
+            date.innerText = storedDate || '';
+        } else {
+            date.innerText = storedDate || date.innerText;
         }
 
         if (document.body.classList.contains('compact-mode')) {
@@ -302,8 +312,14 @@ function adjustMessageLayout() {
                 // Insert elements in the correct order
                 message.insertBefore(username, messageContent);
                 message.insertBefore(messageContent, username.nextSibling);
-                message.insertBefore(timestamp, messageContent.nextSibling);
-                message.insertBefore(date, timestamp.nextSibling);
+                // Insert date and timestamp in the correct order
+                message.insertBefore(date, messageContent.nextSibling);
+                message.insertBefore(timestamp, date.nextSibling);
+                // Add a space after messageContent
+                messageContent.insertAdjacentHTML('afterend', ' ');
+                date.insertAdjacentHTML('afterend', ' ');
+                username.insertAdjacentHTML('afterend', ' ');
+                timestamp.insertAdjacentHTML('afterend', ' ');
             }
         } else {
             if (!header) {
@@ -316,8 +332,8 @@ function adjustMessageLayout() {
                 if (date) date.remove();
                 // Append elements to header
                 header.appendChild(username);
-                header.appendChild(timestamp);
                 header.appendChild(date);
+                header.appendChild(timestamp);
                 message.insertBefore(header, messageContent);
             }
         }

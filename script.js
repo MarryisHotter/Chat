@@ -4,6 +4,7 @@ document.getElementById('sendButton').addEventListener('click', function() {
     const messageInput = document.getElementById('messageInput');
     const messagesContainer = document.getElementById('messages');
     const currentChannel = document.querySelector('.chat-header h2').innerText;
+    const username = "user"; // Replace with actual username
 
     if (messageInput.value.trim() !== '') {
         const newMessage = document.createElement('div');
@@ -37,11 +38,22 @@ document.getElementById('sendButton').addEventListener('click', function() {
         }
 
         messagesContainer.appendChild(newMessage);
-        messageInput.value = '';
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-        // Adjust the layout for the new message
-        adjustMessageLayout();
+        // Save message to database
+        fetch('save-message.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `channel=${encodeURIComponent(currentChannel)}&username=${username}&message=${encodeURIComponent(messageInput.value)}`
+        }).then(response => response.text())
+          .then(data => {
+              console.log('Success:', data);
+              messageInput.value = ''; // Clear the input field
+              loadMessages(currentChannel); // Reload messages after sending
+          })
+          .catch(error => console.error('Error:', error));
     }
 });
 
@@ -70,7 +82,6 @@ channels.forEach(channel => {
         });
     });
 });
-
 document.addEventListener('keypress', function(event) {
     const messageInput = document.getElementById('messageInput');
     if (!overlay.classList.contains('visible') && event.key.length === 1 && event.key.match(/[a-z0-9]/i)) {
@@ -267,18 +278,15 @@ window.addEventListener('load', function() {
 function adjustMessageLayout() {
     const messages = document.querySelectorAll('.message');
     messages.forEach(message => {
-        // Find elements within the message
         let username = message.querySelector('.username');
         let timestamp = message.querySelector('.timestamp');
         let date = message.querySelector('.date');
         let messageContent = message.querySelector('.message-content');
         let header = message.querySelector('.message-header');
 
-        // Retrieve stored date and timestamp if available
         const storedDate = message.getAttribute('data-date');
         const storedTimestamp = message.getAttribute('data-timestamp');
 
-        // If elements are missing, create them
         if (!username) {
             username = document.createElement('span');
             username.classList.add('username');
@@ -303,19 +311,14 @@ function adjustMessageLayout() {
 
         if (document.body.classList.contains('compact-mode')) {
             if (header) {
-                // Move elements out of header
                 header.remove();
-                // Remove existing elements to prevent duplicates
                 username.remove();
                 date.remove();
                 timestamp.remove();
-                // Insert elements in the correct order
                 message.insertBefore(username, messageContent);
                 message.insertBefore(messageContent, username.nextSibling);
-                // Insert date and timestamp in the correct order
                 message.insertBefore(date, messageContent.nextSibling);
                 message.insertBefore(timestamp, date.nextSibling);
-                // Add a space after messageContent
                 messageContent.insertAdjacentHTML('afterend', ' ');
                 date.insertAdjacentHTML('afterend', ' ');
                 username.insertAdjacentHTML('afterend', ' ');
@@ -323,19 +326,39 @@ function adjustMessageLayout() {
             }
         } else {
             if (!header) {
-                // Create header and move elements into it
                 header = document.createElement('div');
                 header.classList.add('message-header');
-                // Remove elements from message to avoid duplicates
                 if (username) username.remove();
                 if (timestamp) timestamp.remove();
                 if (date) date.remove();
-                // Append elements to header
                 header.appendChild(username);
                 header.appendChild(date);
                 header.appendChild(timestamp);
                 message.insertBefore(header, messageContent);
             }
         }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Load messages for the default channel
+    loadMessages('general');
+});
+
+function loadMessages(channel) {
+    fetch(`save-message.php?channel=${channel}`)
+    .then(response => response.json())
+    .then(data => {
+        const messagesContainer = document.getElementById("messages");
+        messagesContainer.innerHTML = ''; // Clear existing messages
+        data.forEach(message => {
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("message");
+            messageElement.innerHTML = `<strong>${message.username}</strong>: ${message.message} <em>${message.timestamp}</em>`;
+            messagesContainer.appendChild(messageElement);
+        });
+    })
+    .catch((error) => {
+        console.error('Error:', error);
     });
 }

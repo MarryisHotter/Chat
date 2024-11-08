@@ -353,8 +353,16 @@ function loadMessages(channel) {
         messagesContainer.innerHTML = ''; // Clear existing messages
         data.forEach(message => {
             const messageElement = document.createElement("div");
-            messageElement.classList.add("message");
-            messageElement.innerHTML = `<strong>${message.username}</strong>: ${message.message} <em>${message.timestamp}</em>`;
+            messageElement.classList.add("message", "imported");
+            messageElement.setAttribute('data-channel', channel);
+            messageElement.setAttribute('data-date', message.timestamp.split(' ')[0]);
+            messageElement.setAttribute('data-timestamp', message.timestamp.split(' ')[1]);
+            messageElement.innerHTML = `
+                <span class="username">${message.username}:</span>
+                <span class="message-content">${message.message}</span>
+                <span class="date">${message.timestamp.split(' ')[0]}</span>
+                <span class="timestamp">${message.timestamp.split(' ')[1]}</span>
+            `;
             messagesContainer.appendChild(messageElement);
         });
     })

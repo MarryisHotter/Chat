@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve messages for a specific channel
     if (isset($_GET['channel'])) {
         $channel = $conn->real_escape_string($_GET['channel']);
-        $sql = "SELECT username, message, DATE_FORMAT(timestamp, '%e.%c.%Y %H:%i') as timestamp FROM messages WHERE channel='$channel' ORDER BY timestamp ASC";
+        $sql = "SELECT username, message, timestamp FROM messages WHERE channel='$channel' ORDER BY timestamp ASC";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {

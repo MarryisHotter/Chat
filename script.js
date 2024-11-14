@@ -4,7 +4,7 @@ document.getElementById('sendButton').addEventListener('click', function() {
     const messageInput = document.getElementById('messageInput');
     const messagesContainer = document.getElementById('messages');
     const currentChannel = document.querySelector('.chat-header h2').innerText;
-    const username = "user"; // Replace with actual username
+    const username = "You"; // Replace with actual username
 
     if (messageInput.value.trim() !== '') {
         const newMessage = document.createElement('div');
@@ -67,21 +67,18 @@ const channels = document.querySelectorAll('.channel');
 channels.forEach(channel => {
     channel.addEventListener('click', function() {
         const chatHeader = document.getElementById('chatHeader');
-        const messagesContainer = document.getElementById('messages');
-        const selectedChannel = this.innerText;  
+        const selectedChannel = this.innerText;
+    
         chatHeader.innerHTML = `<h2>${selectedChannel}</h2>`;
-        
-        const allMessages = document.querySelectorAll('.message');
-        allMessages.forEach(message => {
-            message.style.display = 'none';
-        });
 
-        const channelMessages = document.querySelectorAll(`.message[data-channel="${selectedChannel}"]`);
-        channelMessages.forEach(message => {
-            message.style.display = 'block';
-        });
+        // Clear existing messages and load new ones
+        const messagesContainer = document.getElementById('messages');
+        messagesContainer.innerHTML = '';
+        loadMessages(selectedChannel);
+        localStorage.setItem('lastChannel', selectedChannel);
     });
 });
+
 document.addEventListener('keypress', function(event) {
     const messageInput = document.getElementById('messageInput');
     if (!overlay.classList.contains('visible') && event.key.length === 1 && event.key.match(/[a-z0-9]/i)) {
@@ -165,24 +162,15 @@ document.getElementById('createChannelButton').addEventListener('click', functio
 
     newChannel.addEventListener('click', function() {
         const chatHeader = document.getElementById('chatHeader');
-        const messagesContainer = document.getElementById('messages');
         const selectedChannel = this.innerText;
     
         chatHeader.innerHTML = `<h2>${selectedChannel}</h2>`;
-        
-        const allMessages = document.querySelectorAll('.message');
-        allMessages.forEach(message => {
-            message.style.display = 'none';
-        });
 
-        const channelMessages = document.querySelectorAll(`.message[data-channel="${selectedChannel}"]`);
-        channelMessages.forEach(message => {
-            message.style.display = 'block';
-        });
-
-        messagesContainer.classList.remove('slide-in');
-        void messagesContainer.offsetWidth;
-        messagesContainer.classList.add('slide-in');
+        // Clear existing messages and load new ones
+        const messagesContainer = document.getElementById('messages');
+        messagesContainer.innerHTML = '';
+        loadMessages(selectedChannel);
+        localStorage.setItem('lastChannel', selectedChannel);
     });
 
     channelsContainer.appendChild(newChannel);
@@ -211,6 +199,7 @@ channels.forEach(channel => {
         messagesContainer.classList.remove('slide-in');
         void messagesContainer.offsetWidth;
         messagesContainer.classList.add('slide-in');
+        localStorage.setItem('lastChannel', selectedChannel);
     });
 });
 
@@ -341,8 +330,14 @@ function adjustMessageLayout() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Load messages for the default channel
-    loadMessages('general');
+    const savedChannel = localStorage.getItem('lastChannel') || 'general';
+    // Update chat header
+    const chatHeader = document.getElementById('chatHeader');
+    chatHeader.innerHTML = `<h2>${savedChannel}</h2>`;
+    // Clear existing messages and load messages for the saved channel
+    const messagesContainer = document.getElementById('messages');
+    messagesContainer.innerHTML = '';
+    loadMessages(savedChannel);
 });
 
 function loadMessages(channel) {
@@ -353,10 +348,11 @@ function loadMessages(channel) {
         messagesContainer.innerHTML = ''; // Clear existing messages
         data.forEach(message => {
             const messageElement = document.createElement("div");
-            messageElement.classList.add("message", "imported");
+            messageElement.classList.add("message");
             messageElement.setAttribute('data-channel', channel);
             messageElement.setAttribute('data-date', message.timestamp.split(' ')[0]);
             messageElement.setAttribute('data-timestamp', message.timestamp.split(' ')[1]);
+
             messageElement.innerHTML = `
                 <span class="username">${message.username}:</span>
                 <span class="message-content">${message.message}</span>
@@ -365,6 +361,7 @@ function loadMessages(channel) {
             `;
             messagesContainer.appendChild(messageElement);
         });
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
     })
     .catch((error) => {
         console.error('Error:', error);

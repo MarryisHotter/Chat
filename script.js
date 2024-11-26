@@ -1,9 +1,30 @@
 const lastMessageTimestamps = {};
+let username = "";  // Variable to hold the fetched username
+let currentChannelId = null;
+let currentChannelName = '';
+
+// Fetch the username from get-username.php
+fetch('get-username.php')
+    .then(response => {
+        console.log(response);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.error) {
+            console.error('Error:', data.error);
+        } else {
+            username = data.username;
+        }
+    })
+    .catch(error => console.error('Error fetching username:', error));
 
 document.getElementById('sendButton').addEventListener('click', function() {
     const messageInput = document.getElementById('messageInput');
     const messagesContainer = document.getElementById('messages');
-    const currentChannel = document.querySelector('.chat-header h2').innerText;
+    const currentChannel = currentChannelId;
 
     if (messageInput.value.trim() !== '') {
         const newMessage = document.createElement('div');
@@ -28,7 +49,7 @@ document.getElementById('sendButton').addEventListener('click', function() {
             }
         }
 
-        newMessage.innerHTML = `<span class="username">You:</span> <span class="message-content">${messageInput.value}</span>`;
+        newMessage.innerHTML = `<span class="username">${username}:</span> <span class="message-content">${messageInput.value}</span>`;
         if (showTimestamp) {
             newMessage.innerHTML += ` <span class="date">${date}</span> <span class="timestamp">${timestamp}</span>`;
             lastMessageTimestamps[currentChannel] = { lastTimestamp: timestamp, lastDate: date };
@@ -37,11 +58,22 @@ document.getElementById('sendButton').addEventListener('click', function() {
         }
 
         messagesContainer.appendChild(newMessage);
-        messageInput.value = '';
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-        // Adjust the layout for the new message
-        adjustMessageLayout();
+        // Save message to database
+        fetch('save-message.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `channel=${encodeURIComponent(currentChannel)}&username=${encodeURIComponent(username)}&message=${encodeURIComponent(messageInput.value)}`
+        }).then(response => response.text())
+          .then(data => {
+              console.log('Success:', data);
+              messageInput.value = ''; // Clear the input field
+              loadMessages(currentChannel); // Reload messages after sending
+          })
+          .catch(error => console.error('Error:', error));
     }
 });
 
@@ -49,26 +81,6 @@ document.getElementById('messageInput').addEventListener('keypress', function(ev
     if (event.key === 'Enter') {
         document.getElementById('sendButton').click();
     }
-});
-
-const channels = document.querySelectorAll('.channel');
-channels.forEach(channel => {
-    channel.addEventListener('click', function() {
-        const chatHeader = document.getElementById('chatHeader');
-        const messagesContainer = document.getElementById('messages');
-        const selectedChannel = this.innerText;  
-        chatHeader.innerHTML = `<h2>${selectedChannel}</h2>`;
-        
-        const allMessages = document.querySelectorAll('.message');
-        allMessages.forEach(message => {
-            message.style.display = 'none';
-        });
-
-        const channelMessages = document.querySelectorAll(`.message[data-channel="${selectedChannel}"]`);
-        channelMessages.forEach(message => {
-            message.style.display = 'block';
-        });
-    });
 });
 
 document.addEventListener('keypress', function(event) {
@@ -133,8 +145,14 @@ document.getElementById('toggleChannelAdder').addEventListener('click', function
 
 document.getElementById('createChannelButton').addEventListener('click', function() {
     const newChannelName = document.getElementById('newChannelName').value.trim();
+    const channelType = document.querySelector('input[name="channelType"]:checked').value;
     const channelsContainer = document.getElementById('channels');
     const channelError = document.getElementById('channelError');
+    let users = [];
+
+    if (channelType === 'private') {
+        users = Array.from(document.querySelectorAll('.user-checkbox:checked')).map(cb => cb.value);
+    }
 
     if (newChannelName === '') {
         channelError.innerText = 'Channel name cannot be empty.';
@@ -147,60 +165,85 @@ document.getElementById('createChannelButton').addEventListener('click', functio
         return;
     }
 
-    const newChannel = document.createElement('div');
-    newChannel.classList.add('channel');
-    newChannel.id = newChannelName.toLowerCase();
-    newChannel.innerText = newChannelName;
+    fetch('save-channel.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `channelName=${encodeURIComponent(newChannelName)}&channelType=${encodeURIComponent(channelType)}&users=${encodeURIComponent(JSON.stringify(users))}`
+    }).then(response => response.json())
+      .then(data => {
+          if (data.error) {
+              channelError.innerText = data.error;
+          } else {
+              const newChannel = document.createElement('div');
+              newChannel.classList.add('channel');
+              newChannel.id = newChannelName.toLowerCase();
+              newChannel.innerText = newChannelName;
 
-    newChannel.addEventListener('click', function() {
-        const chatHeader = document.getElementById('chatHeader');
-        const messagesContainer = document.getElementById('messages');
-        const selectedChannel = this.innerText;
-    
-        chatHeader.innerHTML = `<h2>${selectedChannel}</h2>`;
-        
-        const allMessages = document.querySelectorAll('.message');
-        allMessages.forEach(message => {
-            message.style.display = 'none';
-        });
+              newChannel.addEventListener('click', function() {
+                  const chatHeader = document.getElementById('chatHeader');
+                  const selectedChannel = this.id; // Use the channel ID directly
+              
+                  chatHeader.innerHTML = `<h2>${newChannelName}</h2>`;
 
-        const channelMessages = document.querySelectorAll(`.message[data-channel="${selectedChannel}"]`);
-        channelMessages.forEach(message => {
-            message.style.display = 'block';
-        });
+                  // Clear existing messages and load new ones
+                  const messagesContainer = document.getElementById('messages');
+                  messagesContainer.innerHTML = '';
+                  loadMessages(selectedChannel);
+                  localStorage.setItem('lastChannel', selectedChannel);
+              });
 
-        messagesContainer.classList.remove('slide-in');
-        void messagesContainer.offsetWidth;
-        messagesContainer.classList.add('slide-in');
-    });
-
-    channelsContainer.appendChild(newChannel);
-    document.getElementById('newChannelName').value = '';
-    channelError.innerText = '';
+              channelsContainer.appendChild(newChannel);
+              document.getElementById('newChannelName').value = '';
+              channelError.innerText = '';
+          }
+      })
+      .catch(error => {
+          channelError.innerText = 'Error creating channel: ' + error;
+      });
 });
 
-channels.forEach(channel => {
-    channel.addEventListener('click', function() {
-        const chatHeader = document.getElementById('chatHeader');
-        const messagesContainer = document.getElementById('messages');
-        const selectedChannel = this.innerText;
-    
-        chatHeader.innerHTML = `<h2>${selectedChannel}</h2>`;
-        
-        const allMessages = document.querySelectorAll('.message');
-        allMessages.forEach(message => {
-            message.style.display = 'none';
-        });
-
-        const channelMessages = document.querySelectorAll(`.message[data-channel="${selectedChannel}"]`);
-        channelMessages.forEach(message => {
-            message.style.display = 'block';
-        });
-
-        messagesContainer.classList.remove('slide-in');
-        void messagesContainer.offsetWidth;
-        messagesContainer.classList.add('slide-in');
+// Toggle user selection based on channel type
+document.querySelectorAll('input[name="channelType"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const userSelection = document.getElementById('userSelection');
+        if (this.value === 'private') {
+            userSelection.classList.remove('hidden');
+            loadUserList(); // Load initial user list
+        } else {
+            userSelection.classList.add('hidden');
+            document.getElementById('userList').innerHTML = '';
+            document.getElementById('userSearchInput').value = '';
+        }
     });
+});
+
+// Modify loadUserList to accept a search query
+function loadUserList(searchText = '') {
+    fetch(`search-users.php?query=${encodeURIComponent(searchText)}`)
+        .then(response => response.json())
+        .then(data => {
+            const userList = document.getElementById('userList');
+            userList.innerHTML = '';
+            data.users.forEach(user => {
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.classList.add('user-checkbox');
+                checkbox.value = user.username;
+                const label = document.createElement('label');
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(user.username));
+                userList.appendChild(label);
+            });
+        })
+        .catch(error => console.error('Error fetching user list:', error));
+}
+
+// Add event listener for the search input
+document.getElementById('userSearchInput').addEventListener('input', function() {
+    const searchText = this.value.trim();
+    loadUserList(searchText);
 });
 
 document.getElementById('settingsButton').addEventListener('click', function() {
@@ -241,6 +284,7 @@ document.getElementById('compactToggle').addEventListener('change', function() {
     }
     adjustMessageLayout();
 });
+
 window.addEventListener('load', function() {
     const theme = localStorage.getItem('theme');
     if (theme === 'light') {
@@ -267,18 +311,15 @@ window.addEventListener('load', function() {
 function adjustMessageLayout() {
     const messages = document.querySelectorAll('.message');
     messages.forEach(message => {
-        // Find elements within the message
         let username = message.querySelector('.username');
         let timestamp = message.querySelector('.timestamp');
         let date = message.querySelector('.date');
         let messageContent = message.querySelector('.message-content');
         let header = message.querySelector('.message-header');
 
-        // Retrieve stored date and timestamp if available
         const storedDate = message.getAttribute('data-date');
         const storedTimestamp = message.getAttribute('data-timestamp');
 
-        // If elements are missing, create them
         if (!username) {
             username = document.createElement('span');
             username.classList.add('username');
@@ -303,19 +344,14 @@ function adjustMessageLayout() {
 
         if (document.body.classList.contains('compact-mode')) {
             if (header) {
-                // Move elements out of header
                 header.remove();
-                // Remove existing elements to prevent duplicates
                 username.remove();
                 date.remove();
                 timestamp.remove();
-                // Insert elements in the correct order
                 message.insertBefore(username, messageContent);
                 message.insertBefore(messageContent, username.nextSibling);
-                // Insert date and timestamp in the correct order
                 message.insertBefore(date, messageContent.nextSibling);
                 message.insertBefore(timestamp, date.nextSibling);
-                // Add a space after messageContent
                 messageContent.insertAdjacentHTML('afterend', ' ');
                 date.insertAdjacentHTML('afterend', ' ');
                 username.insertAdjacentHTML('afterend', ' ');
@@ -323,14 +359,11 @@ function adjustMessageLayout() {
             }
         } else {
             if (!header) {
-                // Create header and move elements into it
                 header = document.createElement('div');
                 header.classList.add('message-header');
-                // Remove elements from message to avoid duplicates
                 if (username) username.remove();
                 if (timestamp) timestamp.remove();
                 if (date) date.remove();
-                // Append elements to header
                 header.appendChild(username);
                 header.appendChild(date);
                 header.appendChild(timestamp);
@@ -339,3 +372,269 @@ function adjustMessageLayout() {
         }
     });
 }
+
+// Function to open user profile
+function openUserProfile(username) {
+    const userProfilePopup = document.getElementById('userProfilePopup');
+    userProfilePopup.querySelector('.username').innerText = username;
+    userProfilePopup.classList.add('visible');
+    const overlay = document.getElementById('overlay');
+    overlay.classList.add('visible');
+    overlay.classList.remove('hidden');
+    // Add event listener to overlay to close profile when clicked outside
+    overlay.addEventListener('click', closeUserProfile);
+}
+
+// Function to close user profile
+function closeUserProfile() {
+    const userProfilePopup = document.getElementById('userProfilePopup');
+    userProfilePopup.classList.remove('visible');
+    const overlay = document.getElementById('overlay');
+    overlay.classList.remove('visible');
+    overlay.classList.add('hidden');
+    // Remove event listener from overlay
+    overlay.removeEventListener('click', closeUserProfile);
+}
+
+// Event listener for usernames in messages
+function addUsernameClickEvents() {
+    const usernames = document.querySelectorAll('.message .username');
+    usernames.forEach(usernameElement => {
+        usernameElement.addEventListener('click', function() {
+            const username = this.innerText.replace(':', '');
+            openUserProfile(username);
+        });
+    });
+}
+
+// Modify loadMessages function to add username click events after loading messages
+function loadMessages(channelId) {
+    fetch(`load-messages.php?channel=${encodeURIComponent(channelId)}`)
+        .then(response => response.json())
+        .then(data => {
+            const messagesContainer = document.getElementById("messages");
+            messagesContainer.innerHTML = ''; // Clear existing messages
+            data.forEach(message => {
+                const messageElement = document.createElement("div");
+                messageElement.classList.add("message");
+                messageElement.setAttribute('data-channel', channelId);
+                messageElement.setAttribute('data-date', message.timestamp.split(' ')[0]);
+                messageElement.setAttribute('data-timestamp', message.timestamp.split(' ')[1]);
+
+                messageElement.innerHTML = `
+                    <span class="username">${message.username}:</span>
+                    <span class="message-content">${message.message}</span>
+                    <span class="date">${message.timestamp.split(' ')[0]}</span>
+                    <span class="timestamp">${message.timestamp.split(' ')[1]}</span>
+                `;
+                messagesContainer.appendChild(messageElement);
+            });
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            addUsernameClickEvents(); // Add this line
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+}
+
+// Event listener for usernames in user dropdown
+function addUserDropdownEvents() {
+    const userItems = document.querySelectorAll('#userDropdownContent .user-item');
+    userItems.forEach(userItem => {
+        userItem.addEventListener('click', function() {
+            const username = this.innerText;
+            openUserProfile(username);
+        });
+    });
+}
+
+// Modify the code where user dropdown is populated
+// ...existing code...
+fetch(`get-channel-users.php?channel=${encodeURIComponent(selectedChannel)}`)
+    .then(response => response.json())
+    .then(data => {
+        const userDropdownContent = document.getElementById('userDropdownContent');
+        userDropdownContent.innerHTML = '';
+        // ...existing code...
+        data.users.forEach(user => {
+            const userItem = document.createElement('div');
+            userItem.textContent = user.username;
+            userItem.classList.add('user-item'); // Add this line
+            userDropdownContent.appendChild(userItem);
+        });
+        addUserDropdownEvents(); // Add this line
+    })
+    .catch(error => {
+        // ...existing code...
+    });
+// ...existing code...
+
+// Event listener for closing the user profile popup
+document.getElementById('closeUserProfileButton').addEventListener('click', function() {
+    closeUserProfile();
+});
+
+function loadChannels() {
+    fetch('load-channels.php')
+        .then(response => {
+            console.log('Response Headers:', response.headers); // Log response headers for debugging
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            // Check if response is JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Received non-JSON response');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                // Optionally display error message to the user
+                return;
+            }
+
+            const channelsContainer = document.getElementById('channels');
+            channelsContainer.innerHTML = ''; // Clear existing channels
+
+            data.channels.forEach(channel => {
+                const channelElement = document.createElement('div');
+                channelElement.classList.add('channel');
+                channelElement.id = channel.id; // Set the ID of the channel
+                channelElement.innerText = channel.name; // Set the NAME of the channel
+
+                // Capture channel properties
+                const channelId = channel.id;
+                const channelName = channel.name;
+                const channelType = channel.type;
+
+                channelElement.addEventListener('click', function() {
+                    const chatHeader = document.getElementById('chatHeader');
+                    const selectedChannel = channelId; // Use captured channel ID
+
+                    chatHeader.querySelector('h2').textContent = channelName; // Use captured channel name
+
+                    // Set currentChannelId and currentChannelName before the fetch call
+                    currentChannelId = channelId;
+                    currentChannelName = channelName;
+
+                    if (channelType === 'private') {
+                        const userDropdownContainer = document.querySelector('.user-dropdown-container');
+                        userDropdownContainer.style.display = 'block';
+
+                        // Attach the event listener to the dropdown button
+                        const userDropdownButton = document.getElementById('userDropdownButton');
+                        if (userDropdownButton && !userDropdownButton._eventAttached) {
+                            userDropdownButton.addEventListener('click', function(event) {
+                                event.stopPropagation();
+                                const dropdownContent = document.getElementById('userDropdownContent');
+                                dropdownContent.classList.toggle('active');
+
+                                // Rotate the arrow icon
+                                const arrow = this.querySelector('.arrow');
+                                arrow.textContent = dropdownContent.classList.contains('active') ? '▴' : '▾';
+
+                                // Fetch and display user data
+                                fetch(`get-channel-users.php?channel=${encodeURIComponent(currentChannelId)}`, {
+                                    credentials: 'include'
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log('Users:', data.users);
+                                    console.log('Total users:', data.users.length);
+                                    const userDropdownContent = document.getElementById('userDropdownContent');
+                                    userDropdownContent.innerHTML = ''; // Clear existing content to avoid duplication
+                                    if (data.users && data.users.length > 0) {
+                                        data.users.forEach(user => {
+                                            const userItem = document.createElement('div');
+                                            userItem.textContent = user.username;
+                                            userItem.classList.add('user-item');
+                                            userDropdownContent.appendChild(userItem);
+                                        });
+                                        const userCount = document.createElement('div');
+                                        userCount.textContent = `Total users: ${data.users.length}`;
+                                        userCount.classList.add('user-count');
+                                        userDropdownContent.appendChild(userCount);
+                                        addUserDropdownEvents();
+                                    } else {
+                                        const noUsersItem = document.createElement('div');
+                                        noUsersItem.textContent = 'No users found';
+                                        userDropdownContent.appendChild(noUsersItem);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching channel users:', error);
+                                    const userDropdownContent = document.getElementById('userDropdownContent');
+                                    userDropdownContent.innerHTML = '<div>Error loading users</div>';
+                                });
+                            });
+                            userDropdownButton._eventAttached = true; // Mark event as attached
+                        }
+
+                        // Use the updated currentChannelId in the fetch call
+                        fetch(`get-channel-users.php?channel=${encodeURIComponent(currentChannelId)}`, {
+                            credentials: 'include'
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            const userDropdownContent = document.getElementById('userDropdownContent');
+                            userDropdownContent.innerHTML = '';
+                            if (data.users && data.users.length > 0) {
+                                data.users.forEach(user => {
+                                    console.log(user + ' is a user ' + user.username);
+                                    const userItem = document.createElement('div');
+                                    userItem.textContent = user.username;
+                                    userItem.classList.add('user-item'); // Add this line
+                                    userDropdownContent.appendChild(userItem);
+                                });
+                                addUserDropdownEvents();
+                            } else {
+                                const noUsersItem = document.createElement('div');
+                                noUsersItem.textContent = 'No users found';
+                                userDropdownContent.appendChild(noUsersItem);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching channel users:', error);
+                            const userDropdownContent = document.getElementById('userDropdownContent');
+                            userDropdownContent.innerHTML = '<div>Error loading users</div>';
+                        });
+                    } else {
+                        const userDropdownContainer = document.querySelector('.user-dropdown-container');
+                        userDropdownContainer.style.display = 'none';
+                    }
+
+                    loadMessages(selectedChannel);
+                    localStorage.setItem('lastChannel', selectedChannel);
+                });
+                document.getElementById('channels').appendChild(channelElement);
+            });
+
+            // Load the last selected channel or the first available channel
+            const savedChannel = localStorage.getItem('lastChannel') || (data.channels.length > 0 ? data.channels[0].id : null);
+            if (savedChannel) {
+                const channelElement = document.getElementById(savedChannel);
+                if (channelElement) {
+                    channelElement.click();
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error loading channels:', error);
+            // Optionally display error message to the user
+        });
+}
+
+//Close the dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdownContent = document.getElementById('userDropdownContent');
+    const userDropdownButton = document.getElementById('userDropdownButton');
+    console.log("1" + event.target);
+    if (dropdownContent.classList.contains('active') && !dropdownContent.contains(event.target) && event.target !== userDropdownButton) {
+        dropdownContent.classList.remove('active');
+        console.log("2" + dropdownContent);
+        const arrow = userDropdownButton.querySelector('.arrow');
+        arrow.textContent = '▾';
+    }
+});

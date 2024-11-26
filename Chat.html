@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (!isset($_SESSION['username'])) {
+    header("Location: login.html");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,6 +24,16 @@
         <button id="toggleChannelAdder">+</button>
         <div id="channelAdder" class="hidden">
             <input type="text" id="newChannelName" placeholder="New channel name">
+            <div>
+                <label><input type="radio" name="channelType" value="public" checked> Public</label>
+                <label><input type="radio" name="channelType" value="private"> Private</label>
+            </div>
+            <div id="userSelection" class="hidden">
+                <input type="text" id="userSearchInput" placeholder="Search users...">
+                <div id="userList">
+                    <!-- User list will be populated here -->
+                </div>
+            </div>
             <button id="createChannelButton">Create Channel</button>
             <div id="channelError" class="error-message"></div>
         </div>
@@ -25,6 +42,12 @@
     <div class="chat-area">
         <div class="chat-header" id="chatHeader">
             <h2>General</h2>
+            <div class="user-dropdown-container" style="display: none;">
+                <button id="userDropdownButton">Users <span class="arrow">▾</span></button>
+                <div id="userDropdownContent" class="dropdown-content">
+                    <!-- User list will be populated here -->
+                </div>
+            </div>
         </div>
         <div class="messages" id="messages">
         </div>
@@ -43,9 +66,21 @@
             <input type="checkbox" id="compactToggle" checked> Compact Messages
         </label>
         <div></div>
+        <button id="accountSettingsButton">Account Settings</button>
         <button id="closeSettingsButton">Close</button>
     </div>
     <div id="overlay" class="hidden"></div>
+    <!-- User Profile Popup -->
+    <div id="userProfilePopup" class="user-profile-popup">
+        <button class="close-button" id="closeUserProfileButton">&times;</button>
+        <h3 class="username"></h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae.</p>
+    </div>
     <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            loadChannels();
+        });
+    </script>
 </body>
 </html>

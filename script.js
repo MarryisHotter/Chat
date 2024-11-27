@@ -77,15 +77,14 @@ document.getElementById('sendButton').addEventListener('click', function() {
     }
 });
 
-document.getElementById('messageInput').addEventListener('keypress', function(event) {
+document.getElementById('messageInput').addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
+        const messageInput = document.getElementById('messageInput');
         if (event.shiftKey) {
-            console.log('Shift + Enter pressed');
-            // Insert a line break
-            const messageInput = document.getElementById('messageInput');
             const cursorPosition = messageInput.selectionStart;
-            messageInput.value = messageInput.value.substring(0, cursorPosition) + '\n' + messageInput.value.substring(cursorPosition);
+            messageInput.setRangeText('\n', cursorPosition, cursorPosition, 'end');
             messageInput.selectionStart = messageInput.selectionEnd = cursorPosition + 1;
+            console.log('Shift + Enter pressed');
         } else {
             console.log('Enter pressed');
             document.getElementById('sendButton').click();

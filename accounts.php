@@ -12,6 +12,15 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Create database if it doesn't exist
+$sql = "CREATE DATABASE IF NOT EXISTS chat_app";
+if ($conn->query($sql) === TRUE) {
+    echo "Database created successfully or already exists";
+} else {
+    echo "Error creating database: " . $conn->error;
+}
+
+
 // Select the database
 $conn->select_db("chat_app");
 

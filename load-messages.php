@@ -5,7 +5,11 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 
-require_once 'config.php'; 
+include 'config.php';
+$dbUsername = "root";
+$dbPassword = "";
+$conn = new mysqli($servername, $dbUsername, $dbPassword);
+$conn->select_db("chat_app");
 
 $channelId = $_GET['channel'];
 

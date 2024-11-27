@@ -1,8 +1,21 @@
 <?php
 session_start();
+include 'config.php';
+$username = "root";
+$password = "";
 
-require_once 'config.php'; 
+// Create connection
+$conn = new mysqli($servername, $username, $password);
 
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Select the database
+$conn->select_db("chat_app");
+
+// Create 'users' table if it doesn't exist
 $userTableSql = "CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
@@ -10,12 +23,14 @@ $userTableSql = "CREATE TABLE IF NOT EXISTS users (
 )";
 $conn->query($userTableSql);
 
+// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
     $username = $conn->real_escape_string($_POST['username']);
     $password = $_POST['password'];
 
     if ($action === 'register') {
+        // Registration logic
         if (strlen($password) < 8) {
             echo "Password must be at least 8 characters.";
             exit;
@@ -29,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             echo "Username already exists.";
         }
     } elseif ($action === 'login') {
+        // Login logic
         $sql = "SELECT * FROM users WHERE username='$username'";
         $result = $conn->query($sql);
         if ($result->num_rows == 1) {

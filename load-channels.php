@@ -1,21 +1,44 @@
 <?php
 session_start();
+
+// Set the Content-Type header to application/json
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['username'])) {
+    // Return an error in JSON format instead of redirecting
     echo json_encode(['error' => 'User not authenticated']);
     exit;
 }
 
+// Suppress error reporting to prevent invalid JSON output
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/php-error.log');
+ini_set('error_log', __DIR__ . '/php-error.log'); // Adjust the path if necessary
 
-require_once 'config.php'; 
+include 'config.php';
+$dbUsername = "root";
+$dbPassword = "";
+$conn = new mysqli($servername, $dbUsername, $dbPassword);
 
+// Check for connection errors
+if ($conn->connect_error) {
+    error_log('Database connection error: ' . $conn->connect_error);
+    echo json_encode(['error' => 'Database connection error.']);
+    exit;
+}
+
+// Select the database
+if (!$conn->select_db("chat_app")) {
+    error_log('Database selection error: ' . $conn->error);
+    echo json_encode(['error' => 'Database selection error.']);
+    exit;
+}
+
+// Fetch the channels available to the user
 $username = $_SESSION['username'];
 
+// Prepare and execute the query to fetch channels
 $stmt = $conn->prepare("
     SELECT channels.id, channels.name, channels.type
     FROM channels
@@ -44,5 +67,6 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 $conn->close();
 
+// Return the channels in JSON format
 echo json_encode(['channels' => $channels]);
 ?>

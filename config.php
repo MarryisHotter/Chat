@@ -1,6 +1,5 @@
-
 <?php
-$servername = "mysql";
+$servername = "localhost";
 $dbUsername = "mario";
 $dbPassword = "zTUMGzNToCinAzEcdIlGWIOAu";
 $dbname = "chat_app";

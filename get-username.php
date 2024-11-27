@@ -4,7 +4,18 @@ session_start();
 header('Content-Type: application/json'); // Ensure the response is JSON
 
 if (isset($_SESSION['username'])) {
-    require_once 'config.php'; // Include the configuration file
+    include 'config.php';
+    $dbUsername = "root";
+    $dbPassword = "";
+    $dbname = "chat_app";
+
+    $conn = new mysqli($servername, $dbUsername, $dbPassword, $dbname);
+
+    if ($conn->connect_error) {
+        error_log("Database connection failed: " . $conn->connect_error);
+        echo json_encode(['error' => 'Database connection failed']);
+        exit;
+    }
 
     $username = $_SESSION['username'];
     error_log("Session username: " . $username); // Debugging line

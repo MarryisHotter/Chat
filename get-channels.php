@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 if (!isset($_SESSION['username'])) {
@@ -12,22 +11,7 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/php-error.log');
 
-$servername = "localhost";
-$dbUsername = "root";
-$dbPassword = "";
-$conn = new mysqli($servername, $dbUsername, $dbPassword);
-
-if ($conn->connect_error) {
-    error_log('Database connection error: ' . $conn->connect_error);
-    echo json_encode(['error' => 'Database connection error.']);
-    exit;
-}
-
-if (!$conn->select_db("chat_app")) {
-    error_log('Database selection error: ' . $conn->error);
-    echo json_encode(['error' => 'Database selection error.']);
-    exit;
-}
+require_once 'config.php'; // Include the configuration file
 
 $username = $_SESSION['username'];
 

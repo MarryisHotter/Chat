@@ -5,11 +5,7 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 
-$servername = "localhost";
-$dbUsername = "root";
-$dbPassword = "";
-$dbName = "chat_app";
-$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);
+include('config.php');
 
 if ($conn->connect_error) {
     echo json_encode(['error' => 'Database connection failed']);

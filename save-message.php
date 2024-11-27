@@ -5,14 +5,10 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 
-$servername = "localhost";
-$username = "root";
-$password = "";
+include('config.php');
 
-// Create connection
-$conn = new mysqli($servername, $username, $password);
+$conn = new mysqli($servername, $dbUsername, $dbPassword);
 
-// Check connection
 if ($conn->connect_error) {
     error_log("Connection failed: " . $conn->connect_error);
     die("Connection failed: " . $conn->connect_error);
@@ -20,7 +16,6 @@ if ($conn->connect_error) {
     error_log("Connection successful");
 }
 
-// Create database if it doesn't exist
 $dbSql = "CREATE DATABASE IF NOT EXISTS chat_app";
 if ($conn->query($dbSql) === TRUE) {
     error_log("Database 'chat_app' checked/created successfully");
@@ -28,10 +23,8 @@ if ($conn->query($dbSql) === TRUE) {
     error_log("Error creating database: " . $conn->error);
 }
 
-// Select the database
 $conn->select_db("chat_app");
 
-// Create table if it doesn't exist
 $tableSql = "CREATE TABLE IF NOT EXISTS messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     channel VARCHAR(255) NOT NULL,
@@ -46,7 +39,6 @@ if ($conn->query($tableSql) === TRUE) {
     error_log("Error creating table: " . $conn->error);
 }
 
-// Check if POST data is received
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['channel']) && isset($_POST['message']) && isset($_SESSION['username'])) {
         $channel = $conn->real_escape_string($_POST['channel']);
@@ -68,7 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "Error: Missing data";
     }
 } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Retrieve messages for a specific channel
     if (isset($_GET['channel'])) {
         $channel = $conn->real_escape_string($_GET['channel']);
         $sql = "SELECT username, message, timestamp FROM messages WHERE channel='$channel' ORDER BY timestamp ASC";

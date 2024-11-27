@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 if (!isset($_SESSION['username'])) {
@@ -6,18 +5,13 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 
-$servername = "localhost";
-$dbUsername = "root";
-$dbPassword = "";
-$conn = new mysqli($servername, $dbUsername, $dbPassword);
-$conn->select_db("chat_app");
+require_once 'config.php';
 
 $currentUsername = $_SESSION['username'];
 $query = isset($_GET['query']) ? $_GET['query'] : '';
 $searchText = '%' . $conn->real_escape_string($query) . '%';
 $startsWithText = $conn->real_escape_string($query) . '%';
 
-// Prepare and execute the query
 $stmt = $conn->prepare("
     SELECT username,
         CASE

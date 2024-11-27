@@ -79,10 +79,19 @@ document.getElementById('sendButton').addEventListener('click', function() {
 
 document.getElementById('messageInput').addEventListener('keypress', function(event) {
     if (event.key === 'Enter') {
-        document.getElementById('sendButton').click();
+        if (event.shiftKey) {
+            console.log('Shift + Enter pressed');
+            // Insert a line break
+            const messageInput = document.getElementById('messageInput');
+            const cursorPosition = messageInput.selectionStart;
+            messageInput.value = messageInput.value.substring(0, cursorPosition) + '\n' + messageInput.value.substring(cursorPosition);
+            messageInput.selectionStart = messageInput.selectionEnd = cursorPosition + 1;
+        } else {
+            console.log('Enter pressed');
+            document.getElementById('sendButton').click();
+        }
     }
 });
-
 document.addEventListener('keypress', function(event) {
     const messageInput = document.getElementById('messageInput');
     if (!overlay.classList.contains('visible') && event.key.length === 1 && event.key.match(/[a-z0-9]/i)) {

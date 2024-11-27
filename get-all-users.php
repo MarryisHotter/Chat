@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 if (!isset($_SESSION['username'])) {
@@ -6,11 +5,7 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 
-$servername = "localhost";
-$dbUsername = "root";
-$dbPassword = "";
-$conn = new mysqli($servername, $dbUsername, $dbPassword);
-$conn->select_db("chat_app");
+require_once 'config.php'; // Include the configuration file
 
 $currentUsername = $_SESSION['username'];
 

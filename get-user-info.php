@@ -1,13 +1,8 @@
-
 <?php
 if (isset($_GET['username'])) {
     $username = $_GET['username'];
-    $servername = "localhost";
-    $dbUsername = "root";
-    $dbPassword = "";
     
-    $conn = new mysqli($servername, $dbUsername, $dbPassword);
-    $conn->select_db("chat_app");
+    require_once 'config.php'; // Include the configuration file
 
     $sql = "SELECT username, status FROM users WHERE username='$username'";
     $result = $conn->query($sql);

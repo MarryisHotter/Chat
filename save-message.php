@@ -6,11 +6,9 @@ if (!isset($_SESSION['username'])) {
 }
 
 include 'config.php';
-$username = "root";
-$dbpassword = "";
 
 // Create connection
-$conn = new mysqli($servername, $username, $dbpassword);
+$conn = new mysqli($servername, $dbUsername, $dbpassword);
 
 // Check connection
 if ($conn->connect_error) {
@@ -50,12 +48,12 @@ if ($conn->query($tableSql) === TRUE) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['channel']) && isset($_POST['message']) && isset($_SESSION['username'])) {
         $channel = $conn->real_escape_string($_POST['channel']);
-        $username = $conn->real_escape_string($_SESSION['username']);
+        $dbUsername = $conn->real_escape_string($_SESSION['username']);
         $message = $conn->real_escape_string($_POST['message']);
         $timestamp = date('Y-m-d H:i:s');
 
         $stmt = $conn->prepare("INSERT INTO messages (channel, username, message, timestamp) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssss", $channel, $username, $message, $timestamp);
+        $stmt->bind_param("ssss", $channel, $dbUsername, $message, $timestamp);
 
         if ($stmt->execute()) {
             echo json_encode(['success' => 'Message saved successfully']);

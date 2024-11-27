@@ -6,9 +6,6 @@ if (!isset($_SESSION['username'])) {
 }
 
 include 'config.php';
-$dbUsername = "root";
-$dbPassword = "";
-$dbName = "chat_app";
 $conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);
 
 if ($conn->connect_error) {

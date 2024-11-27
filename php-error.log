@@ -154,3 +154,32 @@ Stack trace:
 #0 C:\xampp\htdocs\chat\Chat\load-channels.php(21): mysqli->__construct('localhost', 'root', Object(SensitiveParameterValue))
 #1 {main}
   thrown in C:\xampp\htdocs\chat\Chat\load-channels.php on line 21
+[28-Nov-2024 00:35:40 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'mario'@'localhost' (using password: NO) in C:\xampp\htdocs\chat\Chat\load-channels.php:21
+Stack trace:
+#0 C:\xampp\htdocs\chat\Chat\load-channels.php(21): mysqli->__construct('localhost', 'mario', Object(SensitiveParameterValue))
+#1 {main}
+  thrown in C:\xampp\htdocs\chat\Chat\load-channels.php on line 21
+[28-Nov-2024 00:35:57 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'mario'@'localhost' (using password: NO) in C:\xampp\htdocs\chat\Chat\save-channel.php:16
+Stack trace:
+#0 C:\xampp\htdocs\chat\Chat\save-channel.php(16): mysqli->__construct('localhost', 'mario', Object(SensitiveParameterValue))
+#1 {main}
+  thrown in C:\xampp\htdocs\chat\Chat\save-channel.php on line 16
+[28-Nov-2024 00:40:19 Europe/Berlin] PHP Warning:  mysqli::__construct(): php_network_getaddresses: getaddrinfo for mysql failed: Der angegebene Host ist unbekannt.  in C:\xampp\htdocs\chat\Chat\load-channels.php on line 22
+[28-Nov-2024 00:40:19 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: php_network_getaddresses: getaddrinfo for mysql failed: Der angegebene Host ist unbekannt.  in C:\xampp\htdocs\chat\Chat\load-channels.php:22
+Stack trace:
+#0 C:\xampp\htdocs\chat\Chat\load-channels.php(22): mysqli->__construct('mysql', 'root', Object(SensitiveParameterValue))
+#1 {main}
+  thrown in C:\xampp\htdocs\chat\Chat\load-channels.php on line 22
+[28-Nov-2024 00:41:36 Europe/Berlin] PHP Warning:  Undefined variable $dbUsername in C:\xampp\htdocs\chat\Chat\load-channels.php on line 20
+[28-Nov-2024 00:41:36 Europe/Berlin] PHP Warning:  Undefined variable $dbPassword in C:\xampp\htdocs\chat\Chat\load-channels.php on line 20
+[28-Nov-2024 00:41:36 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user ''@'localhost' (using password: NO) in C:\xampp\htdocs\chat\Chat\load-channels.php:20
+Stack trace:
+#0 C:\xampp\htdocs\chat\Chat\load-channels.php(20): mysqli->__construct('localhost', NULL, Object(SensitiveParameterValue))
+#1 {main}
+  thrown in C:\xampp\htdocs\chat\Chat\load-channels.php on line 20
+[28-Nov-2024 00:50:13 Europe/Berlin] PHP Warning:  mysqli::__construct(): php_network_getaddresses: getaddrinfo for mysql failed: Der angegebene Host ist unbekannt.  in C:\xampp\htdocs\chat\Chat\load-channels.php on line 22
+[28-Nov-2024 00:50:13 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: php_network_getaddresses: getaddrinfo for mysql failed: Der angegebene Host ist unbekannt.  in C:\xampp\htdocs\chat\Chat\load-channels.php:22
+Stack trace:
+#0 C:\xampp\htdocs\chat\Chat\load-channels.php(22): mysqli->__construct('mysql', 'root', Object(SensitiveParameterValue))
+#1 {main}
+  thrown in C:\xampp\htdocs\chat\Chat\load-channels.php on line 22

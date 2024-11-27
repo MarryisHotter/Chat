@@ -2,15 +2,13 @@
 <?php
 session_start();
 if (isset($_SESSION['username'])) {
-    $username = $_SESSION['username'];
+    $dbUsername = $_SESSION['username'];
     include 'config.php';
-    $dbUsername = "root";
-    $dbPassword = "";
     
     $conn = new mysqli($servername, $dbUsername, $dbPassword);
     $conn->select_db("chat_app");
 
-    $sql = "SELECT email, status FROM users WHERE username='$username'";
+    $sql = "SELECT email, status FROM users WHERE username='$dbUsername'";
     $result = $conn->query($sql);
 
     if ($result->num_rows == 1) {

@@ -5,9 +5,6 @@ header('Content-Type: application/json'); // Ensure the response is JSON
 
 if (isset($_SESSION['username'])) {
     include 'config.php';
-    $dbUsername = "root";
-    $dbPassword = "";
-    $dbname = "chat_app";
 
     $conn = new mysqli($servername, $dbUsername, $dbPassword, $dbname);
 
@@ -17,19 +14,19 @@ if (isset($_SESSION['username'])) {
         exit;
     }
 
-    $username = $_SESSION['username'];
-    error_log("Session username: " . $username); // Debugging line
+    $dbUsername = $_SESSION['username'];
+    error_log("Session username: " . $dbUsername); // Debugging line
 
-    $sql = "SELECT status FROM users WHERE username='$username'";
+    $sql = "SELECT status FROM users WHERE username='$dbUsername'";
     $result = $conn->query($sql);
 
     if ($result && $result->num_rows == 1) {
         $user = $result->fetch_assoc();
         $status = $user['status'];
-        echo json_encode(['username' => $username, 'status' => $status]);
+        echo json_encode(['username' => $dbUsername, 'status' => $status]);
     } else {
         error_log("User not found or multiple users with the same username"); // Debugging line
-        echo json_encode(['username' => $username, 'status' => 'unknown']);
+        echo json_encode(['username' => $dbUsername, 'status' => 'unknown']);
     }
 
     $conn->close();

@@ -1,22 +1,20 @@
 
 <?php
 if (isset($_GET['username'])) {
-    $username = $_GET['username'];
+    $dbUsername = $_GET['username'];
     include 'config.php';
-    $dbUsername = "root";
-    $dbPassword = "";
     
     $conn = new mysqli($servername, $dbUsername, $dbPassword);
     $conn->select_db("chat_app");
 
-    $sql = "SELECT username, status FROM users WHERE username='$username'";
+    $sql = "SELECT username, status FROM users WHERE username='$dbUsername'";
     $result = $conn->query($sql);
 
     if ($result->num_rows == 1) {
         $user = $result->fetch_assoc();
         echo json_encode(['username' => $user['username'], 'status' => $user['status']]);
     } else {
-        echo json_encode(['username' => $username, 'status' => 'Status not available']);
+        echo json_encode(['username' => $dbUsername, 'status' => 'Status not available']);
     }
     $conn->close();
 } else {

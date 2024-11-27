@@ -36,7 +36,7 @@ if (!$conn->select_db("chat_app")) {
 }
 
 // Fetch the channels available to the user
-$username = $_SESSION['username'];
+$dbUsername = $_SESSION['username'];
 
 // Prepare and execute the query to fetch channels
 $stmt = $conn->prepare("
@@ -51,7 +51,7 @@ if (!$stmt) {
     echo json_encode(['error' => 'Database error during channel retrieval.']);
     exit;
 }
-$stmt->bind_param("s", $username);
+$stmt->bind_param("s", $dbUsername);
 $stmt->execute();
 $result = $stmt->get_result();
 

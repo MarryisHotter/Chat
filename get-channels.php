@@ -13,8 +13,6 @@ ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/php-error.log');
 
 include 'config.php';
-$dbUsername = "root";
-$dbPassword = "";
 $conn = new mysqli($servername, $dbUsername, $dbPassword);
 
 if ($conn->connect_error) {
@@ -29,7 +27,7 @@ if (!$conn->select_db("chat_app")) {
     exit;
 }
 
-$username = $_SESSION['username'];
+$dbUsername = $_SESSION['username'];
 
 $stmt = $conn->prepare("
     SELECT id, name, type 
@@ -42,7 +40,7 @@ if (!$stmt) {
     echo json_encode(['error' => 'Database error during channel fetch.']);
     exit;
 }
-$stmt->bind_param("s", $username);
+$stmt->bind_param("s", $dbUsername);
 $stmt->execute();
 $result = $stmt->get_result();
 

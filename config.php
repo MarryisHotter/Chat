@@ -1,6 +1,15 @@
 <?php
-$servername = "mysql";
-$dbUsername = "mario";
-$dbPassword = "zTUMGzNToCinAzEcdIlGWIOAu";
-$dbname = "chat_app";
+$local = false;
+
+if ($local) {
+    $servername = "localhost";
+    $dbUsername = "root";
+    $dbPassword = "";
+    $dbname = "chat_app";
+} else {
+    $servername = "mysql";
+    $dbUsername = "mario";
+    $dbPassword = "zTUMGzNToCinAzEcdIlGWIOAu";
+    $dbname = "chat_app";
+}
 ?>

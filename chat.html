@@ -67,7 +67,7 @@
     <div id="userProfilePopup" class="user-profile-popup">
         <button class="close-button" id="closeUserProfileButton">&times;</button>
         <h3 class="username"></h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae.</p>
+        <p class="status"></p> <!-- Changed this line to display the user's status -->
         <button id="createDMButton">Create DM</button>
     </div>
     <div id="accountSettingsMenu" class="hidden">
@@ -79,17 +79,33 @@
     <script src="script.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            console.log("Document loaded"); // Added console log to verify code execution
             loadChannels();
             const accountSettingsButton = document.getElementById('accountSettingsButton');
             const accountSettingsMenu = document.getElementById('accountSettingsMenu');
             const overlay = document.getElementById('overlay');
             const closeSettingsButton = document.getElementById('closeSettingsButton');
             const settingsMenu = document.getElementById('settingsMenu');
-            
+            const userProfilePopup = document.getElementById('userProfilePopup');
+            const closeUserProfileButton = document.getElementById('closeUserProfileButton');
+
             accountSettingsButton.addEventListener('click', function() {
                 accountSettingsMenu.classList.add('visible');
                 overlay.classList.add('visible');
                 overlay.classList.remove('hidden');
+                
+                // Fetch the username and status
+                fetch('get-username.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            console.error('Error:', data.error);
+                        } else {
+                            document.getElementById('accountSettingsUsername').innerText = data.username;
+                            document.getElementById('accountSettingsStatus').value = data.status || '';
+                        }
+                    })
+                    .catch(error => console.error('Error fetching username:', error));
             });
 
             overlay.addEventListener('click', function() {
@@ -97,12 +113,40 @@
                 overlay.classList.remove('visible');
                 overlay.classList.add('hidden');
                 settingsMenu.classList.add('hidden');
+                userProfilePopup.classList.remove('visible');
             });
 
             closeSettingsButton.addEventListener('click', function() {
                 accountSettingsMenu.classList.remove('visible');
                 overlay.classList.remove('visible');
                 overlay.classList.add('hidden');
+            });
+
+            closeUserProfileButton.addEventListener('click', function() {
+                userProfilePopup.classList.remove('visible');
+                overlay.classList.remove('visible');
+                overlay.classList.add('hidden');
+            });
+
+            document.querySelectorAll('.username').forEach(function(element) {
+                element.addEventListener('click', function() {
+                    const username = element.innerText;
+                    console.log(`Loading profile for ${username}`); // Added console log
+                    fetch(`get-user-status.php?username=${username}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                console.error('Error:', data.error);
+                            } else {
+                                userProfilePopup.querySelector('.username').innerText = data.username;
+                                userProfilePopup.querySelector('.status').innerText = data.status || 'No status available';
+                                userProfilePopup.classList.add('visible');
+                                overlay.classList.add('visible');
+                                overlay.classList.remove('hidden');
+                            }
+                        })
+                        .catch(error => console.error('Error fetching user status:', error));
+                });
             });
         });
     </script>

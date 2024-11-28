@@ -3,6 +3,52 @@ let username = "";  // Variable to hold the fetched username
 let currentChannelId = null;
 let currentChannelName = '';
 
+document.addEventListener('DOMContentLoaded', function() {
+
+    const saveButton = document.getElementById('saveAccountSettingsButton');
+    if (saveButton) {
+        saveButton.addEventListener('click', function() {
+            const statusInput = document.getElementById('accountSettingsStatus').value.trim();
+
+            // Log the status input for debugging
+            console.log('Saving status:', statusInput);
+
+            fetch('save-status.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `status=${encodeURIComponent(statusInput)}`
+            })
+            .then(response => {
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                } else {
+                    throw new Error('Invalid response format');
+                }
+            })
+            .then(data => {
+                console.log('Server response:', data);
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    const statusElement = document.getElementById('accountSettingsStatus');
+                    statusElement.style.color = 'green';
+                    setTimeout(() => {
+                        statusElement.style.color = '';
+                    }, 3000);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating status:', error);
+                alert('Error updating status: ' + error.message);
+            });
+        });
+    }
+});
+
 // Fetch the username from get-username.php
 fetch('get-username.php')
     .then(response => {
@@ -695,28 +741,4 @@ document.getElementById('accountSettingsButton').addEventListener('click', funct
     accountSettingsMenu.classList.add('visible');
     overlay.classList.add('visible');
     overlay.classList.remove('hidden');
-});
-
-document.getElementById('saveAccountSettingsButton').addEventListener('click', function() {
-    const statusInput = document.getElementById('accountSettingsStatus').value.trim();
-    fetch('save-status.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `status=${encodeURIComponent(statusInput)}`
-    }).then(response => response.json())
-      .then(data => {
-          if (data.error) {
-              alert(data.error);
-          } else {
-              alert('Status updated successfully');
-              document.getElementById('accountSettingsMenu').classList.remove('visible');
-              document.getElementById('overlay').classList.remove('visible');
-              document.getElementById('overlay').classList.add('hidden');
-          }
-      })
-      .catch(error => {
-          alert('Error updating status: ' + error);
-      });
 });

@@ -1,11 +1,10 @@
 <?php
 session_start();
+include 'config.php';
 
 header('Content-Type: application/json'); // Ensure the response is JSON
 
 if (isset($_SESSION['username'])) {
-    include 'config.php';
-
     $conn = new mysqli($servername, $dbUsername, $dbPassword, $dbname);
 
     if ($conn->connect_error) {
@@ -14,19 +13,20 @@ if (isset($_SESSION['username'])) {
         exit;
     }
 
-    $dbUsername = $_SESSION['username'];
-    error_log("Session username: " . $dbUsername); // Debugging line
+    $username = $_SESSION['username'];
+    $usernameEscaped = $conn->real_escape_string($username);
+    error_log("Session username: " . $username); // Debugging line
 
-    $sql = "SELECT status FROM users WHERE username='$dbUsername'";
+    $sql = "SELECT status FROM users WHERE username='$usernameEscaped'";
     $result = $conn->query($sql);
 
     if ($result && $result->num_rows == 1) {
         $user = $result->fetch_assoc();
         $status = $user['status'];
-        echo json_encode(['username' => $dbUsername, 'status' => $status]);
+        echo json_encode(['username' => $username, 'status' => $status]);
     } else {
         error_log("User not found or multiple users with the same username"); // Debugging line
-        echo json_encode(['username' => $dbUsername, 'status' => 'unknown']);
+        echo json_encode(['username' => $username, 'status' => 'unknown']);
     }
 
     $conn->close();

@@ -1,10 +1,3 @@
-<?php
-session_start();
-if (!isset($_SESSION['username'])) {
-    header("Location: login.html");
-    exit;
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,10 +70,40 @@ if (!isset($_SESSION['username'])) {
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae.</p>
         <button id="createDMButton">Create DM</button>
     </div>
+    <div id="accountSettingsMenu" class="hidden">
+        <h2>Account Settings</h2>
+        <div class="username" id="accountSettingsUsername"></div>
+        <input type="text" id="accountSettingsStatus" placeholder="Enter your status">
+        <button id="saveAccountSettingsButton">Save</button>
+    </div>
     <script src="script.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             loadChannels();
+            const accountSettingsButton = document.getElementById('accountSettingsButton');
+            const accountSettingsMenu = document.getElementById('accountSettingsMenu');
+            const overlay = document.getElementById('overlay');
+            const closeSettingsButton = document.getElementById('closeSettingsButton');
+            const settingsMenu = document.getElementById('settingsMenu');
+            
+            accountSettingsButton.addEventListener('click', function() {
+                accountSettingsMenu.classList.add('visible');
+                overlay.classList.add('visible');
+                overlay.classList.remove('hidden');
+            });
+
+            overlay.addEventListener('click', function() {
+                accountSettingsMenu.classList.remove('visible');
+                overlay.classList.remove('visible');
+                overlay.classList.add('hidden');
+                settingsMenu.classList.add('hidden');
+            });
+
+            closeSettingsButton.addEventListener('click', function() {
+                accountSettingsMenu.classList.remove('visible');
+                overlay.classList.remove('visible');
+                overlay.classList.add('hidden');
+            });
         });
     </script>
 </body>

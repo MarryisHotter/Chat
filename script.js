@@ -672,3 +672,51 @@ document.addEventListener('click', function(event) {
         arrow.textContent = '▾';
     }
 });
+
+document.getElementById('accountSettingsButton').addEventListener('click', function() {
+    const accountSettingsMenu = document.getElementById('accountSettingsMenu');
+    const overlay = document.getElementById('overlay');
+    const usernameElement = document.getElementById('accountSettingsUsername');
+    const statusElement = document.getElementById('accountSettingsStatus');
+
+    // Fetch the username and status
+    fetch('get-username.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+            } else {
+                usernameElement.innerText = data.username;
+                statusElement.value = data.status || '';
+            }
+        })
+        .catch(error => console.error('Error fetching username:', error));
+
+    accountSettingsMenu.classList.add('visible');
+    overlay.classList.add('visible');
+    overlay.classList.remove('hidden');
+});
+
+document.getElementById('saveAccountSettingsButton').addEventListener('click', function() {
+    const statusInput = document.getElementById('accountSettingsStatus').value.trim();
+    fetch('save-status.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `status=${encodeURIComponent(statusInput)}`
+    }).then(response => response.json())
+      .then(data => {
+          if (data.error) {
+              alert(data.error);
+          } else {
+              alert('Status updated successfully');
+              document.getElementById('accountSettingsMenu').classList.remove('visible');
+              document.getElementById('overlay').classList.remove('visible');
+              document.getElementById('overlay').classList.add('hidden');
+          }
+      })
+      .catch(error => {
+          alert('Error updating status: ' + error);
+      });
+});

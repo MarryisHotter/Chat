@@ -519,6 +519,31 @@ body.light-mode #accountSettingsMenu {
     background-color: #4a5b9e;
 }
 
+#accountSettingsButton {
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    background-color: #5b6eae;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#accountSettingsButton:hover {
+    background-color: #4a5b9e;
+}
+
+#accountSettingsMenu .username {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#accountSettingsMenu .status {
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
 /* Style the User Info popup */
 .user-info-popup {
     position: absolute;

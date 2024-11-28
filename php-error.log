@@ -1,0 +1,16 @@
+[28-Nov-2024 22:05:54 Europe/Berlin] PHP Warning:  mysqli::__construct(): php_network_getaddresses: getaddrinfo for mysql failed: Der angegebene Host ist unbekannt.  in C:\xampp\htdocs\chat\Chat\load-channels.php on line 20
+[28-Nov-2024 22:05:54 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: php_network_getaddresses: getaddrinfo for mysql failed: Der angegebene Host ist unbekannt.  in C:\xampp\htdocs\chat\Chat\load-channels.php:20
+Stack trace:
+#0 C:\xampp\htdocs\chat\Chat\load-channels.php(20): mysqli->__construct('mysql', 'mario', Object(SensitiveParameterValue))
+#1 {main}
+  thrown in C:\xampp\htdocs\chat\Chat\load-channels.php on line 20
+[28-Nov-2024 22:06:00 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'chat_app.channels' doesn't exist in C:\xampp\htdocs\chat\Chat\load-channels.php:40
+Stack trace:
+#0 C:\xampp\htdocs\chat\Chat\load-channels.php(40): mysqli->prepare('\r\n    SELECT ch...')
+#1 {main}
+  thrown in C:\xampp\htdocs\chat\Chat\load-channels.php on line 40
+[28-Nov-2024 22:06:03 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'chat_app.channels' doesn't exist in C:\xampp\htdocs\chat\Chat\load-channels.php:40
+Stack trace:
+#0 C:\xampp\htdocs\chat\Chat\load-channels.php(40): mysqli->prepare('\r\n    SELECT ch...')
+#1 {main}
+  thrown in C:\xampp\htdocs\chat\Chat\load-channels.php on line 40

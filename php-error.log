@@ -1,0 +1,42 @@
+[28-Nov-2024 09:40:49 Europe/Berlin] Error logging test.
+[28-Nov-2024 09:40:49 Europe/Berlin] Session username: test
+[28-Nov-2024 09:40:49 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'status' in 'field list' in C:\xampp\htdocs\chat\Chat\get-username.php:28
+Stack trace:
+#0 C:\xampp\htdocs\chat\Chat\get-username.php(28): mysqli->query('SELECT status F...')
+#1 {main}
+  thrown in C:\xampp\htdocs\chat\Chat\get-username.php on line 28
+[28-Nov-2024 09:41:25 Europe/Berlin] Error logging test.
+[28-Nov-2024 09:41:25 Europe/Berlin] Session username: test
+[28-Nov-2024 09:41:25 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'status' in 'field list' in C:\xampp\htdocs\chat\Chat\get-username.php:28
+Stack trace:
+#0 C:\xampp\htdocs\chat\Chat\get-username.php(28): mysqli->query('SELECT status F...')
+#1 {main}
+  thrown in C:\xampp\htdocs\chat\Chat\get-username.php on line 28
+[28-Nov-2024 09:49:15 Europe/Berlin] Error logging test.
+[28-Nov-2024 09:49:15 Europe/Berlin] Session username: test
+[28-Nov-2024 09:49:15 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'status' in 'field list' in C:\xampp\htdocs\chat\Chat\get-username.php:28
+Stack trace:
+#0 C:\xampp\htdocs\chat\Chat\get-username.php(28): mysqli->query('SELECT status F...')
+#1 {main}
+  thrown in C:\xampp\htdocs\chat\Chat\get-username.php on line 28
+[28-Nov-2024 09:52:13 Europe/Berlin] Error logging test.
+[28-Nov-2024 09:52:13 Europe/Berlin] Session username: test
+[28-Nov-2024 09:52:13 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'status' in 'field list' in C:\xampp\htdocs\chat\Chat\get-username.php:28
+Stack trace:
+#0 C:\xampp\htdocs\chat\Chat\get-username.php(28): mysqli->query('SELECT status F...')
+#1 {main}
+  thrown in C:\xampp\htdocs\chat\Chat\get-username.php on line 28
+[28-Nov-2024 10:05:11 Europe/Berlin] Error logging test.
+[28-Nov-2024 10:05:11 Europe/Berlin] Session username: test
+[28-Nov-2024 10:05:11 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'status' in 'field list' in C:\xampp\htdocs\chat\Chat\get-username.php:28
+Stack trace:
+#0 C:\xampp\htdocs\chat\Chat\get-username.php(28): mysqli->query('SELECT status F...')
+#1 {main}
+  thrown in C:\xampp\htdocs\chat\Chat\get-username.php on line 28
+[28-Nov-2024 10:05:17 Europe/Berlin] Error logging test.
+[28-Nov-2024 10:05:17 Europe/Berlin] Session username: test
+[28-Nov-2024 10:05:17 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'status' in 'field list' in C:\xampp\htdocs\chat\Chat\get-username.php:28
+Stack trace:
+#0 C:\xampp\htdocs\chat\Chat\get-username.php(28): mysqli->query('SELECT status F...')
+#1 {main}
+  thrown in C:\xampp\htdocs\chat\Chat\get-username.php on line 28

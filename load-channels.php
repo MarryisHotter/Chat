@@ -17,8 +17,6 @@ ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/php-error.log'); // Adjust the path if necessary
 
 include 'config.php';
-$dbUsername = "root";
-$dbPassword = "";
 $conn = new mysqli($servername, $dbUsername, $dbPassword);
 
 // Check for connection errors

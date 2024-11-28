@@ -7,6 +7,9 @@ if (!isset($_SESSION['username'])) {
 
 include 'config.php';
 
+ini_set('display_errors', 1);
+error_log("Error logging test.");
+
 // Create connection
 $conn = new mysqli($servername, $dbUsername, $dbpassword);
 

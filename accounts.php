@@ -1,4 +1,5 @@
 <?php
+session_name('chat_app_session');
 session_start();
 include 'config.php';
 

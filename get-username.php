@@ -1,8 +1,15 @@
 <?php
+session_name('chat_app_session');
 session_start();
 
-header('Content-Type: application/json'); // Ensure the response is JSON
-error_log("You messed up!", 3, "php-error.log");
+header('Content-Type: application/json');
+
+// Set the error log file to an absolute path
+ini_set('error_log', __DIR__ . '/php-error.log');
+
+// Test error logging
+error_log("Error logging test.");
+
 if (isset($_SESSION['username'])) {
     include 'config.php';
 

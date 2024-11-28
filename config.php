@@ -1,5 +1,5 @@
 <?php
-$local = true;
+$local = false;
 ini_set('display_errors', 1);
 if ($local) {
     $servername = "localhost";

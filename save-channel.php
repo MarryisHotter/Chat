@@ -79,24 +79,6 @@ if (!$channelName || !$channelType) {
     exit;
 }
 
-// Check if channel name already exists
-$stmt_check = $conn->prepare("SELECT id FROM channels WHERE name = ?");
-if (!$stmt_check) {
-    error_log('Statement preparation error (check): ' . $conn->error);
-    echo json_encode(['error' => 'Database error during channel name check.']);
-    exit;
-}
-$stmt_check->bind_param("s", $channelName);
-$stmt_check->execute();
-$result = $stmt_check->get_result();
-if ($result->num_rows > 0) {
-    echo json_encode(['error' => 'Channel name already exists. Please choose a different name.']);
-    $stmt_check->close();
-    $conn->close();
-    exit;
-}
-$stmt_check->close();
-
 // Prepare and execute channel insertion
 $stmt = $conn->prepare("INSERT INTO channels (id, name, type, creator_username) VALUES (?, ?, ?, ?)");
 if (!$stmt) {

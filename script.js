@@ -167,11 +167,12 @@ document.getElementById('createChannelButton').addEventListener('click', functio
         return;
     }
 
-    const existingChannel = document.getElementById(newChannelName.toLowerCase());
-    if (existingChannel) {
-        channelError.innerText = 'Channel name already in use. Please use a different name.';
-        return;
-    }
+    // Remove the existing channel name check
+    // const existingChannel = document.getElementById(newChannelName.toLowerCase());
+    // if (existingChannel) {
+    //     channelError.innerText = 'Channel name already in use. Please use a different name.';
+    //     return;
+    // }
 
     fetch('save-channel.php', {
         method: 'POST',

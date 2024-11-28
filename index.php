@@ -1,1 +1,8 @@
-<meta http-equiv="refresh" content="0; url=/login.html" />
+<?php
+if (isset($_COOKIE['PHPSESSID'])) {
+    header('Location: /chat.html');
+} else {
+    header('Location: /login.html');
+    exit();
+}
+?>

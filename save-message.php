@@ -8,7 +8,7 @@ if (!isset($_SESSION['username'])) {
 include 'config.php';
 
 // Create connection
-$conn = new mysqli($servername, $dbUsername, $dbpassword);
+$conn = new mysqli($servername, $dbUsername, $dbPassword);
 
 // Check connection
 if ($conn->connect_error) {

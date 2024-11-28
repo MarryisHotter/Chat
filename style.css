@@ -14,6 +14,10 @@ body {
     font-family: Arial, sans-serif;
 }
 
+.ignorelink {
+    color: white;
+    text-decoration: none;
+}
 
 body.dark-mode {
     background-color: #2f3136;

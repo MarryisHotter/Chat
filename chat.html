@@ -17,7 +17,9 @@ if (!isset($_SESSION['username'])) {
     <div class="sidebar">
         <h2>Channels</h2>
         <div class="channels" id="channels">
-            <div class="channel" id="invalid-session">Your session is invalid. Please go back to the login page.</div>
+            <a href="login.html" class="ignorelink">
+              <div class="channel" id="invalid-session">Your session is invalid. Please go back to the login page.</div>
+            </a>
         </div>
         <button id="toggleChannelAdder">+</button>
         <div id="channelAdder" class="hidden">

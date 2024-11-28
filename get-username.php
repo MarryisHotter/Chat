@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 
 // Set the error log file to an absolute path
 ini_set('error_log', __DIR__ . '/php-error.log');
-
+ini_set('display_errors', 1);
 // Test error logging
 error_log("Error logging test.");
 

@@ -6,7 +6,7 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 $local = false;
-
+ini_set('display_errors', 1);
 if ($local) {
     $servername = "localhost";
     $dbUsername = "root";

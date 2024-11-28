@@ -463,6 +463,23 @@ function openUserProfile(username) {
     const overlay = document.getElementById('overlay');
     overlay.classList.add('visible');
     overlay.classList.remove('hidden');
+
+    // Fetch the user's status
+    fetch(`get-user-status.php?username=${encodeURIComponent(username)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                userProfilePopup.querySelector('.status').innerText = 'No status available';
+            } else {
+                userProfilePopup.querySelector('.status').innerText = data.status || 'No status available';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user status:', error);
+            userProfilePopup.querySelector('.status').innerText = 'No status available';
+        });
+
     // Add event listener to overlay to close profile when clicked outside
     overlay.addEventListener('click', closeUserProfile);
 }

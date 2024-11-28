@@ -212,6 +212,33 @@ document.getElementById('createChannelButton').addEventListener('click', functio
       });
 });
 
+document.getElementById('createDMButton').addEventListener('click', function() {
+    const userProfileUsername = document.querySelector('#userProfilePopup .username').innerText;
+    if (!userProfileUsername) {
+        alert('No user selected for DM.');
+        return;
+    }
+
+    const dmChannelName = `DM with ${userProfileUsername}`;
+    fetch('save-channel.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `channelName=${encodeURIComponent(dmChannelName)}&channelType=private&users=${encodeURIComponent(JSON.stringify([userProfileUsername]))}`
+    }).then(response => response.json())
+      .then(data => {
+          if (data.error) {
+              alert(data.error);
+          } else {
+              loadChannels();
+          }
+      })
+      .catch(error => {
+          alert('Error creating DM channel: ' + error);
+      });
+});
+
 // Toggle user selection based on channel type
 document.querySelectorAll('input[name="channelType"]').forEach(radio => {
     radio.addEventListener('change', function() {

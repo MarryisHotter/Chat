@@ -6,7 +6,7 @@ if (!isset($_SESSION['username'])) {
 }
 
 include 'config.php';
-$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);
+$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbname);
 
 if ($conn->connect_error) {
     echo json_encode(['error' => 'Database connection failed']);

@@ -2,7 +2,7 @@
 session_start();
 
 header('Content-Type: application/json'); // Ensure the response is JSON
-
+error_log("You messed up!", 3, "php-error.log");
 if (isset($_SESSION['username'])) {
     include 'config.php';
 

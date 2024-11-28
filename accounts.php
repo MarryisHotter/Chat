@@ -48,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if ($result->num_rows == 1) {
             $user = $result->fetch_assoc();
             if (password_verify($dbPassword, $user['password'])) {
+                session_regenerate_id(true);
                 $_SESSION['username'] = $dbUsername;
                 header("Location: chat.html");
             } else {

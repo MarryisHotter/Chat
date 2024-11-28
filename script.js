@@ -4,7 +4,7 @@ let currentChannelId = null;
 let currentChannelName = '';
 
 // Fetch the username from get-username.php
-fetch('get-username.php')
+fetch('get-username.php', { credentials: 'include' })
     .then(response => {
         console.log(response);
         if (!response.ok) {
@@ -63,6 +63,7 @@ document.getElementById('sendButton').addEventListener('click', function() {
         // Save message to database
         fetch('save-message.php', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
@@ -175,6 +176,7 @@ document.getElementById('createChannelButton').addEventListener('click', functio
 
     fetch('save-channel.php', {
         method: 'POST',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
@@ -229,7 +231,7 @@ document.querySelectorAll('input[name="channelType"]').forEach(radio => {
 
 // Modify loadUserList to accept a search query
 function loadUserList(searchText = '') {
-    fetch(`search-users.php?query=${encodeURIComponent(searchText)}`)
+    fetch(`search-users.php?query=${encodeURIComponent(searchText)}`, { credentials: 'include' })
         .then(response => response.json())
         .then(data => {
             const userList = document.getElementById('userList');
@@ -417,7 +419,7 @@ function addUsernameClickEvents() {
 
 // Modify loadMessages function to add username click events after loading messages
 function loadMessages(channelId) {
-    fetch(`load-messages.php?channel=${encodeURIComponent(channelId)}`)
+    fetch(`load-messages.php?channel=${encodeURIComponent(channelId)}`, { credentials: 'include' })
         .then(response => response.json())
         .then(data => {
             const messagesContainer = document.getElementById("messages");
@@ -458,7 +460,7 @@ function addUserDropdownEvents() {
 
 // Modify the code where user dropdown is populated
 // ...existing code...
-fetch(`get-channel-users.php?channel=${encodeURIComponent(selectedChannel)}`)
+fetch(`get-channel-users.php?channel=${encodeURIComponent(selectedChannel)}`, { credentials: 'include' })
     .then(response => response.json())
     .then(data => {
         const userDropdownContent = document.getElementById('userDropdownContent');
@@ -483,7 +485,7 @@ document.getElementById('closeUserProfileButton').addEventListener('click', func
 });
 
 function loadChannels() {
-    fetch('load-channels.php')
+    fetch('load-channels.php', { credentials: 'include' })
         .then(response => {
             console.log('Response Headers:', response.headers); // Log response headers for debugging
             if (!response.ok) {

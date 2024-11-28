@@ -25,31 +25,31 @@ $conn->query($userTableSql);
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
-    $dbUsername = $conn->real_escape_string($_POST['username']);
-    $dbPassword = $_POST['password'];
+    $Username = $conn->real_escape_string($_POST['username']);
+    $Password = $_POST['password'];
 
     if ($action === 'register') {
         // Registration logic
-        if (strlen($dbPassword) < 8) {
+        if (strlen($Password) < 8) {
             echo "Password must be at least 8 characters.";
             exit;
         }
-        $hashedPassword = password_hash($dbPassword, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO users (username, password) VALUES ('$dbUsername', '$hashedPassword')";
+        $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
+        $sql = "INSERT INTO users (username, password) VALUES ('$Username', '$hashedPassword')";
         if ($conn->query($sql) === TRUE) {
-            $_SESSION['username'] = $dbUsername;
+            $_SESSION['username'] = $Username;
             header("Location: chat.html");
         } else {
             echo "Username already exists.";
         }
     } elseif ($action === 'login') {
         // Login logic
-        $sql = "SELECT * FROM users WHERE username='$dbUsername'";
+        $sql = "SELECT * FROM users WHERE username='$Username'";
         $result = $conn->query($sql);
         if ($result->num_rows == 1) {
             $user = $result->fetch_assoc();
-            if (password_verify($dbPassword, $user['password'])) {
-                $_SESSION['username'] = $dbUsername;
+            if (password_verify($Password, $user['password'])) {
+                $_SESSION['username'] = $Username;
                 header("Location: chat.html");
             } else {
                 echo "Invalid username or password.";

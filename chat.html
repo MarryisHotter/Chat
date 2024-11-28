@@ -24,7 +24,6 @@
             <div id="userSelection" class="hidden">
                 <input type="text" id="userSearchInput" placeholder="Search users...">
                 <div id="userList">
-                    <!-- User list will be populated here -->
                 </div>
             </div>
             <button id="createChannelButton">Create Channel</button>
@@ -38,7 +37,6 @@
             <div class="user-dropdown-container" style="display: none;">
                 <button id="userDropdownButton">Users <span class="arrow">▾</span></button>
                 <div id="userDropdownContent" class="dropdown-content">
-                    <!-- User list will be populated here -->
                 </div>
             </div>
         </div>
@@ -63,11 +61,10 @@
         <button id="closeSettingsButton">Close</button>
     </div>
     <div id="overlay" class="hidden"></div>
-    <!-- User Profile Popup -->
     <div id="userProfilePopup" class="user-profile-popup">
         <button class="close-button" id="closeUserProfileButton">&times;</button>
         <h3 class="username"></h3>
-        <p class="status"></p> <!-- Ensure this line is present to display the user's status -->
+        <p class="status"></p>
         <button id="createDMButton">Create DM</button>
     </div>
     <div id="accountSettingsMenu" class="hidden">
@@ -79,7 +76,7 @@
     <script src="script.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            console.log("Document loaded"); // Added console log to verify code execution
+
             loadChannels();
             const accountSettingsButton = document.getElementById('accountSettingsButton');
             const accountSettingsMenu = document.getElementById('accountSettingsMenu');
@@ -94,7 +91,6 @@
                 overlay.classList.add('visible');
                 overlay.classList.remove('hidden');
                 
-                // Fetch the username and status
                 fetch('get-username.php')
                     .then(response => response.json())
                     .then(data => {
@@ -131,7 +127,7 @@
             document.querySelectorAll('.username').forEach(function(element) {
                 element.addEventListener('click', function() {
                     const username = element.innerText;
-                    console.log(`Loading profile for ${username}`); // Added console log
+                    console.log(`Loading profile for ${username}`); 
                     fetch(`get-user-status.php?username=${username}`)
                         .then(response => response.json())
                         .then(data => {

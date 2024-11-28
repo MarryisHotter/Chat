@@ -485,13 +485,13 @@ function addUserDropdownEvents() {
 }
 
 // Modify the code where user dropdown is populated
-// ...existing code...
+
 fetch(`get-channel-users.php?channel=${encodeURIComponent(selectedChannel)}`)
     .then(response => response.json())
     .then(data => {
         const userDropdownContent = document.getElementById('userDropdownContent');
         userDropdownContent.innerHTML = '';
-        // ...existing code...
+        
         data.users.forEach(user => {
             const userItem = document.createElement('div');
             userItem.textContent = user.username;
@@ -501,9 +501,7 @@ fetch(`get-channel-users.php?channel=${encodeURIComponent(selectedChannel)}`)
         addUserDropdownEvents(); // Add this line
     })
     .catch(error => {
-        // ...existing code...
     });
-// ...existing code...
 
 // Event listener for closing the user profile popup
 document.getElementById('closeUserProfileButton').addEventListener('click', function() {

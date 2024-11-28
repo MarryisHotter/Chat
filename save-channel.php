@@ -66,7 +66,7 @@ if ($conn->multi_query($sql) === FALSE) {
 }
 
 // Ensure all queries are executed
-while ($conn->more_results() && $conn->next_result()) { /* flush multi_queries */ }
+while ($conn->more_results() && $conn->next_result()) {}
 
 $channelName = $_POST['channelName'] ?? null;
 $channelType = $_POST['channelType'] ?? null;

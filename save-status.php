@@ -18,7 +18,6 @@ $username = $_SESSION['username'];
 
 $conn = new mysqli($servername, $dbUsername, $dbPassword, 'chat_app');
 
-// Check the connection
 if ($conn->connect_error) {
     echo json_encode(['error' => 'Database connection failed.']);
     exit;

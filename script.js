@@ -522,7 +522,7 @@ function loadMessages(channelId) {
                 messagesContainer.appendChild(messageElement);
             });
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            addUsernameClickEvents(); // Add this line
+            addUsernameClickEvents(); 
         })
         .catch((error) => {
             console.error('Error:', error);
@@ -551,10 +551,10 @@ fetch(`get-channel-users.php?channel=${encodeURIComponent(selectedChannel)}`)
         data.users.forEach(user => {
             const userItem = document.createElement('div');
             userItem.textContent = user.username;
-            userItem.classList.add('user-item'); // Add this line
+            userItem.classList.add('user-item'); 
             userDropdownContent.appendChild(userItem);
         });
-        addUserDropdownEvents(); // Add this line
+        addUserDropdownEvents(); 
     })
     .catch(error => {
     });
@@ -675,7 +675,7 @@ function loadChannels() {
                                     console.log(user + ' is a user ' + user.username);
                                     const userItem = document.createElement('div');
                                     userItem.textContent = user.username;
-                                    userItem.classList.add('user-item'); // Add this line
+                                    userItem.classList.add('user-item'); 
                                     userDropdownContent.appendChild(userItem);
                                 });
                                 addUserDropdownEvents();

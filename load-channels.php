@@ -26,7 +26,6 @@ if ($conn->connect_error) {
     exit;
 }
 
-// Select the database
 if (!$conn->select_db("chat_app")) {
     error_log('Database selection error: ' . $conn->error);
     echo json_encode(['error' => 'Database selection error.']);

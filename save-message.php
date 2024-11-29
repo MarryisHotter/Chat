@@ -7,10 +7,8 @@ if (!isset($_SESSION['username'])) {
 
 include 'config.php';
 
-// Create connection
 $conn = new mysqli($servername, $dbUsername, $dbPassword);
 
-// Check connection
 if ($conn->connect_error) {
     error_log("Connection failed: " . $conn->connect_error);
     die("Connection failed: " . $conn->connect_error);
@@ -26,7 +24,6 @@ if ($conn->query($dbSql) === TRUE) {
     error_log("Error creating database: " . $conn->error);
 }
 
-// Select the database
 $conn->select_db("chat_app");
 
 // Create table if it doesn't exist

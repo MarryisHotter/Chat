@@ -15,7 +15,6 @@ if (isset($_SESSION['username'])) {
 
     $username = $_SESSION['username'];
     $usernameEscaped = $conn->real_escape_string($username);
-    error_log("Session username: " . $username); // Debugging line
 
     $sql = "SELECT status FROM users WHERE username='$usernameEscaped'";
     $result = $conn->query($sql);
@@ -25,13 +24,11 @@ if (isset($_SESSION['username'])) {
         $status = $user['status'];
         echo json_encode(['username' => $username, 'status' => $status]);
     } else {
-        error_log("User not found or multiple users with the same username"); // Debugging line
         echo json_encode(['username' => $username, 'status' => 'unknown']);
     }
 
     $conn->close();
 } else {
-    error_log("Session username not set"); // Debugging line
     echo json_encode(['username' => 'Guest', 'status' => 'offline']);
 }
 ?>

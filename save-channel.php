@@ -5,23 +5,20 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 
-// Suppress error reporting to prevent invalid JSON output
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/php-error.log'); // Set this to a valid path
+ini_set('error_log', __DIR__ . '/php-error.log');
 
 include 'config.php';
 $conn = new mysqli($servername, $dbUsername, $dbPassword);
 
-// Check for connection errors
 if ($conn->connect_error) {
     error_log('Database connection error: ' . $conn->connect_error);
     echo json_encode(['error' => 'Database connection error.']);
     exit;
 }
 
-// Create database if it does not exist
 $sql = "CREATE DATABASE IF NOT EXISTS chat_app";
 if ($conn->query($sql) === FALSE) {
     error_log('Error creating database: ' . $conn->error);
@@ -29,14 +26,12 @@ if ($conn->query($sql) === FALSE) {
     exit;
 }
 
-// Select the database
 if (!$conn->select_db("chat_app")) {
     error_log('Database selection error: ' . $conn->error);
     echo json_encode(['error' => 'Database selection error.']);
     exit;
 }
 
-// Create tables if they do not exist
 $sql = "
 CREATE TABLE IF NOT EXISTS channels (
     id VARCHAR(255) PRIMARY KEY,
@@ -65,7 +60,6 @@ if ($conn->multi_query($sql) === FALSE) {
     exit;
 }
 
-// Ensure all queries are executed
 while ($conn->more_results() && $conn->next_result()) {}
 
 $channelName = $_POST['channelName'] ?? null;
@@ -79,7 +73,6 @@ if (!$channelName || !$channelType) {
     exit;
 }
 
-// Prepare and execute channel insertion
 $stmt = $conn->prepare("INSERT INTO channels (id, name, type, creator_username) VALUES (?, ?, ?, ?)");
 if (!$stmt) {
     error_log('Statement preparation error (insert): ' . $conn->error);
@@ -88,7 +81,6 @@ if (!$stmt) {
 }
 $stmt->bind_param("ssss", $channelId, $channelName, $channelType, $creatorUsername);
 
-// Execute and check for errors
 if ($stmt->execute()) {
     if ($channelType === 'private') {
         $stmt_user = $conn->prepare("INSERT INTO channel_users (channel_id, username) VALUES (?, ?)");
@@ -97,7 +89,7 @@ if ($stmt->execute()) {
             echo json_encode(['error' => 'Database error during user addition.']);
             exit;
         }
-        // Add the creator to the private channel
+        // Add the creator to the private channel. Legacy code
         $stmt_user->bind_param("ss", $channelId, $creatorUsername);
         if (!$stmt_user->execute()) {
             error_log('Statement execution error (user insert): ' . $stmt_user->error);

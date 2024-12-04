@@ -5,12 +5,10 @@ session_start();
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['username'])) {
-    // Return an error in JSON format instead of redirecting
     echo json_encode(['error' => 'User not authenticated']);
     exit;
 }
 
-// Suppress error reporting to prevent invalid JSON output
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
@@ -19,7 +17,6 @@ ini_set('error_log', __DIR__ . '/php-error.log'); // Adjust the path if necessar
 include 'config.php';
 $conn = new mysqli($servername, $dbUsername, $dbPassword);
 
-// Check for connection errors
 if ($conn->connect_error) {
     error_log('Database connection error: ' . $conn->connect_error);
     echo json_encode(['error' => 'Database connection error.']);
@@ -34,8 +31,6 @@ if (!$conn->select_db("chat_app")) {
 
 // Fetch the channels available to the user
 $dbUsername = $_SESSION['username'];
-
-// Prepare and execute the query to fetch channels
 $stmt = $conn->prepare("
     SELECT channels.id, channels.name, channels.type
     FROM channels

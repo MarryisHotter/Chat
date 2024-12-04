@@ -15,7 +15,6 @@ $query = isset($_GET['query']) ? $_GET['query'] : '';
 $searchText = '%' . $conn->real_escape_string($query) . '%';
 $startsWithText = $conn->real_escape_string($query) . '%';
 
-// Prepare and execute the query
 $stmt = $conn->prepare("
     SELECT username,
         CASE

@@ -1,5 +1,5 @@
 const lastMessageTimestamps = {};
-let username = "";  // Variable to hold the fetched username
+let username = ""; 
 let currentChannelId = null;
 let currentChannelName = '';
 
@@ -9,8 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (saveButton) {
         saveButton.addEventListener('click', function() {
             const statusInput = document.getElementById('accountSettingsStatus').value.trim();
-
-            // Log the status input for debugging
             console.log('Saving status:', statusInput);
 
             fetch('save-status.php', {
@@ -21,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: `status=${encodeURIComponent(statusInput)}`
             })
             .then(response => {
-                // Check if response is JSON
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
                     return response.json();
@@ -48,8 +45,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
-// Fetch the username from get-username.php
 fetch('get-username.php')
     .then(response => {
         console.log(response);
@@ -105,8 +100,6 @@ document.getElementById('sendButton').addEventListener('click', function() {
 
         messagesContainer.appendChild(newMessage);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-        // Save message to database
         fetch('save-message.php', {
             method: 'POST',
             headers: {
@@ -116,8 +109,8 @@ document.getElementById('sendButton').addEventListener('click', function() {
         }).then(response => response.text())
           .then(data => {
               console.log('Success:', data);
-              messageInput.value = ''; // Clear the input field
-              loadMessages(currentChannel); // Reload messages after sending
+              messageInput.value = '';
+              loadMessages(currentChannel);
           })
           .catch(error => console.error('Error:', error));
     }
@@ -234,8 +227,6 @@ document.getElementById('createChannelButton').addEventListener('click', functio
                   const selectedChannel = this.id; // Use the channel ID directly
               
                   chatHeader.innerHTML = `<h2>${newChannelName}</h2>`;
-
-                  // Clear existing messages and load new ones
                   const messagesContainer = document.getElementById('messages');
                   messagesContainer.innerHTML = '';
                   loadMessages(selectedChannel);
@@ -279,13 +270,12 @@ document.getElementById('createDMButton').addEventListener('click', function() {
       });
 });
 
-// Toggle user selection based on channel type
 document.querySelectorAll('input[name="channelType"]').forEach(radio => {
     radio.addEventListener('change', function() {
         const userSelection = document.getElementById('userSelection');
         if (this.value === 'private') {
             userSelection.classList.remove('hidden');
-            loadUserList(); // Load initial user list
+            loadUserList();
         } else {
             userSelection.classList.add('hidden');
             document.getElementById('userList').innerHTML = '';
@@ -293,8 +283,6 @@ document.querySelectorAll('input[name="channelType"]').forEach(radio => {
         }
     });
 });
-
-// Modify loadUserList to accept a search query
 function loadUserList(searchText = '') {
     fetch(`search-users.php?query=${encodeURIComponent(searchText)}`)
         .then(response => response.json())
@@ -315,7 +303,6 @@ function loadUserList(searchText = '') {
         .catch(error => console.error('Error fetching user list:', error));
 }
 
-// Add event listener for the search input
 document.getElementById('userSearchInput').addEventListener('input', function() {
     const searchText = this.value.trim();
     loadUserList(searchText);
@@ -448,7 +435,6 @@ function adjustMessageLayout() {
     });
 }
 
-// Function to open user profile
 function openUserProfile(username) {
     const userProfilePopup = document.getElementById('userProfilePopup');
     userProfilePopup.querySelector('.username').innerText = username;
@@ -457,7 +443,6 @@ function openUserProfile(username) {
     overlay.classList.add('visible');
     overlay.classList.remove('hidden');
 
-    // Fetch the user's status
     fetch(`get-user-status.php?username=${encodeURIComponent(username)}`)
         .then(response => response.json())
         .then(data => {
@@ -472,23 +457,17 @@ function openUserProfile(username) {
             console.error('Error fetching user status:', error);
             userProfilePopup.querySelector('.status').innerText = 'No status available';
         });
-
-    // Add event listener to overlay to close profile when clicked outside
     overlay.addEventListener('click', closeUserProfile);
 }
 
-// Function to close user profile
 function closeUserProfile() {
     const userProfilePopup = document.getElementById('userProfilePopup');
     userProfilePopup.classList.remove('visible');
     const overlay = document.getElementById('overlay');
     overlay.classList.remove('visible');
     overlay.classList.add('hidden');
-    // Remove event listener from overlay
     overlay.removeEventListener('click', closeUserProfile);
 }
-
-// Event listener for usernames in messages
 function addUsernameClickEvents() {
     const usernames = document.querySelectorAll('.message .username');
     usernames.forEach(usernameElement => {
@@ -499,13 +478,12 @@ function addUsernameClickEvents() {
     });
 }
 
-// Modify loadMessages function to add username click events after loading messages
 function loadMessages(channelId) {
     fetch(`load-messages.php?channel=${encodeURIComponent(channelId)}`)
         .then(response => response.json())
         .then(data => {
             const messagesContainer = document.getElementById("messages");
-            messagesContainer.innerHTML = ''; // Clear existing messages
+            messagesContainer.innerHTML = ''; 
             data.forEach(message => {
                 const messageElement = document.createElement("div");
                 messageElement.classList.add("message");
@@ -529,7 +507,6 @@ function loadMessages(channelId) {
         });
 }
 
-// Event listener for usernames in user dropdown
 function addUserDropdownEvents() {
     const userItems = document.querySelectorAll('#userDropdownContent .user-item');
     userItems.forEach(userItem => {
@@ -539,8 +516,6 @@ function addUserDropdownEvents() {
         });
     });
 }
-
-// Modify the code where user dropdown is populated
 
 fetch(`get-channel-users.php?channel=${encodeURIComponent(selectedChannel)}`)
     .then(response => response.json())
@@ -559,7 +534,6 @@ fetch(`get-channel-users.php?channel=${encodeURIComponent(selectedChannel)}`)
     .catch(error => {
     });
 
-// Event listener for closing the user profile popup
 document.getElementById('closeUserProfileButton').addEventListener('click', function() {
     closeUserProfile();
 });
@@ -571,7 +545,6 @@ function loadChannels() {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            // Check if response is JSON
             const contentType = response.headers.get('content-type');
             if (!contentType || !contentType.includes('application/json')) {
                 throw new Error('Received non-JSON response');
@@ -581,31 +554,27 @@ function loadChannels() {
         .then(data => {
             if (data.error) {
                 console.error('Error:', data.error);
-                // Optionally display error message to the user
                 return;
             }
 
             const channelsContainer = document.getElementById('channels');
-            channelsContainer.innerHTML = ''; // Clear existing channels
+            channelsContainer.innerHTML = ''; 
 
             data.channels.forEach(channel => {
                 const channelElement = document.createElement('div');
                 channelElement.classList.add('channel');
-                channelElement.id = channel.id; // Set the ID of the channel
-                channelElement.innerText = channel.name; // Set the NAME of the channel
+                channelElement.id = channel.id; 
+                channelElement.innerText = channel.name; 
 
-                // Capture channel properties
                 const channelId = channel.id;
                 const channelName = channel.name;
                 const channelType = channel.type;
 
                 channelElement.addEventListener('click', function() {
                     const chatHeader = document.getElementById('chatHeader');
-                    const selectedChannel = channelId; // Use captured channel ID
+                    const selectedChannel = channelId; 
 
-                    chatHeader.querySelector('h2').textContent = channelName; // Use captured channel name
-
-                    // Set currentChannelId and currentChannelName before the fetch call
+                    chatHeader.querySelector('h2').textContent = channelName; 
                     currentChannelId = channelId;
                     currentChannelName = channelName;
 
@@ -613,7 +582,6 @@ function loadChannels() {
                         const userDropdownContainer = document.querySelector('.user-dropdown-container');
                         userDropdownContainer.style.display = 'block';
 
-                        // Attach the event listener to the dropdown button
                         const userDropdownButton = document.getElementById('userDropdownButton');
                         if (userDropdownButton && !userDropdownButton._eventAttached) {
                             userDropdownButton.addEventListener('click', function(event) {
@@ -621,11 +589,9 @@ function loadChannels() {
                                 const dropdownContent = document.getElementById('userDropdownContent');
                                 dropdownContent.classList.toggle('active');
 
-                                // Rotate the arrow icon
                                 const arrow = this.querySelector('.arrow');
                                 arrow.textContent = dropdownContent.classList.contains('active') ? '▴' : '▾';
 
-                                // Fetch and display user data
                                 fetch(`get-channel-users.php?channel=${encodeURIComponent(currentChannelId)}`, {
                                     credentials: 'include'
                                 })
@@ -659,10 +625,8 @@ function loadChannels() {
                                     userDropdownContent.innerHTML = '<div>Error loading users</div>';
                                 });
                             });
-                            userDropdownButton._eventAttached = true; // Mark event as attached
+                            userDropdownButton._eventAttached = true; 
                         }
-
-                        // Use the updated currentChannelId in the fetch call
                         fetch(`get-channel-users.php?channel=${encodeURIComponent(currentChannelId)}`, {
                             credentials: 'include'
                         })
@@ -712,11 +676,8 @@ function loadChannels() {
         })
         .catch(error => {
             console.error('Error loading channels:', error);
-            // Optionally display error message to the user
         });
 }
-
-//Close the dropdown when clicking outside
 document.addEventListener('click', function(event) {
     const dropdownContent = document.getElementById('userDropdownContent');
     const userDropdownButton = document.getElementById('userDropdownButton');
@@ -734,8 +695,6 @@ document.getElementById('accountSettingsButton').addEventListener('click', funct
     const overlay = document.getElementById('overlay');
     const usernameElement = document.getElementById('accountSettingsUsername');
     const statusElement = document.getElementById('accountSettingsStatus');
-
-    // Fetch the username and status
     fetch('get-username.php')
         .then(response => response.json())
         .then(data => {

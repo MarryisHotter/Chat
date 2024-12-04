@@ -2,18 +2,14 @@
 session_start();
 include 'config.php';
 
-// Create connection
 $conn = new mysqli($servername, $dbUsername, $dbPassword);
 
-// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Select the database
 $conn->select_db("chat_app");
 
-// Create 'users' table if it doesn't exist
 $userTableSql = "CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
